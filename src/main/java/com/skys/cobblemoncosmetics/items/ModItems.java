@@ -41,6 +41,10 @@ public class ModItems {
     public static final DeferredItem<Item> MIDNIGHT_BADGE = ITEMS.register("midnight_badge",
         () -> new GymBadgeItem(new Item.Properties()));
 
+    // TEST ITEM - Remove when testing is complete
+    public static final DeferredItem<Item> TEST_KEYSTONE_BRACELET = ITEMS.register("test_keystone_bracelet",
+        () -> new TestKeystoneBracelet(new Item.Properties().stacksTo(1)));
+
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.skyscobblemonitems"))
@@ -53,6 +57,7 @@ public class ModItems {
             output.accept(WISTERIA_BADGE.get());
             output.accept(ROCK_BADGE.get());
             output.accept(MIDNIGHT_BADGE.get());
+            output.accept(TEST_KEYSTONE_BRACELET.get()); // TEST - Remove when done
         }).build());
 
     public static void register(IEventBus eventBus) {

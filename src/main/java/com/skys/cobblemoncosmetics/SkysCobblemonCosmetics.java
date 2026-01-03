@@ -1,8 +1,11 @@
 package com.skys.cobblemoncosmetics;
 
 import com.skys.cobblemoncosmetics.items.ModItems;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +20,16 @@ public class SkysCobblemonCosmetics {
         // Register items
         ModItems.register(modEventBus);
 
+        // TEST - Client setup for renderer registration
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            modEventBus.addListener(this::clientSetup);
+        }
+
         LOGGER.info("Sky's Cobblemon Items initialized successfully");
+    }
+
+    // TEST - Remove when testing is complete
+    private void clientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(SkysCobblemonCosmeticsClient::init);
     }
 }

@@ -13,5 +13,7 @@
   "item.skyscobblemonitems.rock_badge.tooltip": "It's not just a boulder, it's a rock! ",
   "item.skyscobblemonitems.midnight_badge": "Midnight Badge",
   "item.skyscobblemonitems.midnight_badge.tooltip": "For those that bump in the night.",
+  "item.skyscobblemonitems.test_keystone_bracelet": "Test Keystone Bracelet",
+  "tooltip.skyscobblemonitems.test_keystone_bracelet.tooltip": "TEST ITEM - Enables Mega Evolution",
   "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
 }

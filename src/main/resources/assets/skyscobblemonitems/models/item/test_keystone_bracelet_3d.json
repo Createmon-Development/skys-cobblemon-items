@@ -1,0 +1,58 @@
+{
+  "textures": {
+    "corn": "skyscobblemonitems:item/test/crop_corn_7"
+  },
+  "gui_light": "front",
+  "elements": [
+    {
+      "name": "Corn Stalk",
+      "from": [6, 0, 6],
+      "to": [10, 20, 10],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#corn"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#corn"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#corn"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#corn"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#corn"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#corn"}
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [90, 180, 0],
+      "translation": [-5.5, 3.5, 9]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [90, 0, 0],
+      "translation": [-5.5, -7.5, 9]
+    },
+    "firstperson_righthand": {
+      "rotation": [15, 60, -90],
+      "translation": [6, -2, 0]
+    },
+    "firstperson_lefthand": {
+      "rotation": [15, -120, 90],
+      "translation": [-4.75, 0, -4.25]
+    },
+    "ground": {
+      "translation": [6.75, 6.75, 6.75],
+      "scale": [1.25, 1.25, 1.25]
+    },
+    "gui": {
+      "rotation": [0, 60, 15],
+      "translation": [13, 16, 0],
+      "scale": [2, 2, 2]
+    },
+    "head": {
+      "rotation": [0, -90, 0],
+      "translation": [-16.5, 24, 16.5],
+      "scale": [3, 3, 3]
+    },
+    "fixed": {
+      "rotation": [0, -90, 0],
+      "translation": [-13.5, 17.5, 14.5],
+      "scale": [2.5, 2.5, 2.5]
+    }
+  }
+}
