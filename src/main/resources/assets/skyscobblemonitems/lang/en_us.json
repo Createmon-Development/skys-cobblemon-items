@@ -1,0 +1,17 @@
+{
+  "item.skyscobblemonitems.engine_badge": "Engine Badge",
+  "item.skyscobblemonitems.engine_badge.tooltip": "Smells of smog and soot",
+  "item.skyscobblemonitems.heartbound_badge": "Heartbound Badge",
+  "item.skyscobblemonitems.heartbound_badge.tooltip": "Rewarded to those whose hearts are unbound by their desires",
+  "item.skyscobblemonitems.button_badge": "Button Badge",
+  "item.skyscobblemonitems.button_badge.tooltip": "A plushie's mysterious button, cold to the touch.",
+  "item.skyscobblemonitems.focus_badge": "Focus Badge",
+  "item.skyscobblemonitems.focus_badge.tooltip": "A singular pulsing eye cradled under a crescent moon, much more interesting than a twisted spoon. A symbol of mental triumph.",
+  "item.skyscobblemonitems.wisteria_badge": "Wisteria Badge",
+  "item.skyscobblemonitems.wisteria_badge.tooltip": "A single wisteria blossom, a strange thing to see by itself.",
+  "item.skyscobblemonitems.rock_badge": "Rock Badge",
+  "item.skyscobblemonitems.rock_badge.tooltip": "It's not just a boulder, it's a rock! ",
+  "item.skyscobblemonitems.midnight_badge": "Midnight Badge",
+  "item.skyscobblemonitems.midnight_badge.tooltip": "For those that bump in the night.",
+  "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
+}

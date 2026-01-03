@@ -1,0 +1,26 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "skyscobblemonitems"
+version = "1.0.0"
+displayName = "Sky's Cobblemon Items"
+description = '''
+A mod for Cobblemon that adds collectible items like gym badges.
+'''
+authors = "Sky"
+
+[[dependencies.skyscobblemonitems]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.skyscobblemonitems]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.22)"
+ordering = "NONE"
+side = "BOTH"
