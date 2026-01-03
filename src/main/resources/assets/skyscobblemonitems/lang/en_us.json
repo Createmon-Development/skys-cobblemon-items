@@ -13,5 +13,11 @@
   "item.skyscobblemonitems.rock_badge.tooltip": "It's not just a boulder, it's a rock! ",
   "item.skyscobblemonitems.midnight_badge": "Midnight Badge",
   "item.skyscobblemonitems.midnight_badge.tooltip": "For those that bump in the night.",
+  "item.skyscobblemonitems.missing_clover": "Missing Clover",
+  "item.skyscobblemonitems.rusted_gold_pokeball": "Rusted Gold Pokeball",
+  "item.skyscobblemonitems.polished_gold_pokeball": "Polished Gold Pokeball",
+  "item.skyscobblemonitems.event_ticket_red": "Event Ticket (Red)",
+  "item.skyscobblemonitems.event_ticket_purple": "Event Ticket (Purple)",
+  "item.skyscobblemonitems.event_ticket_green": "Event Ticket (Green)",
   "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
 }

@@ -41,6 +41,26 @@ public class ModItems {
     public static final DeferredItem<Item> MIDNIGHT_BADGE = ITEMS.register("midnight_badge",
         () -> new GymBadgeItem(new Item.Properties()));
 
+    // Fishing items
+    public static final DeferredItem<Item> MISSING_CLOVER = ITEMS.register("missing_clover",
+        () -> new Item(new Item.Properties().stacksTo(1)));
+
+    public static final DeferredItem<Item> RUSTED_GOLD_POKEBALL = ITEMS.register("rusted_gold_pokeball",
+        () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> POLISHED_GOLD_POKEBALL = ITEMS.register("polished_gold_pokeball",
+        () -> new Item(new Item.Properties()));
+
+    // Event items
+    public static final DeferredItem<Item> EVENT_TICKET_RED = ITEMS.register("event_ticket_red",
+        () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> EVENT_TICKET_PURPLE = ITEMS.register("event_ticket_purple",
+        () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> EVENT_TICKET_GREEN = ITEMS.register("event_ticket_green",
+        () -> new Item(new Item.Properties()));
+
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.skyscobblemonitems"))
@@ -53,6 +73,12 @@ public class ModItems {
             output.accept(WISTERIA_BADGE.get());
             output.accept(ROCK_BADGE.get());
             output.accept(MIDNIGHT_BADGE.get());
+            output.accept(MISSING_CLOVER.get());
+            output.accept(RUSTED_GOLD_POKEBALL.get());
+            output.accept(POLISHED_GOLD_POKEBALL.get());
+            output.accept(EVENT_TICKET_RED.get());
+            output.accept(EVENT_TICKET_PURPLE.get());
+            output.accept(EVENT_TICKET_GREEN.get());
         }).build());
 
     public static void register(IEventBus eventBus) {
