@@ -15,7 +15,6 @@ import java.util.List;
 public class GymBadgeItem extends Item {
     public GymBadgeItem(Properties properties) {
         super(properties
-            .stacksTo(1) // Badges don't stack
             .rarity(Rarity.UNCOMMON) // Makes them show up in purple
         );
     }
