@@ -46,7 +46,7 @@ public class ModItems {
 
     // Fishing items
     public static final DeferredItem<Item> MISSING_CLOVER = ITEMS.register("missing_clover",
-        () -> new Item(new Item.Properties().stacksTo(1)));
+        () -> new MissingCloverItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<Item> RUSTED_GOLD_POKEBALL = ITEMS.register("rusted_gold_pokeball",
         () -> new TooltipItem(new Item.Properties()));
