@@ -1,6 +1,7 @@
 package com.skys.cobblemoncosmetics;
 
 import com.skys.cobblemoncosmetics.items.ModItems;
+import com.skys.cobblemoncosmetics.loot.ModLootModifiers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
@@ -16,6 +17,9 @@ public class SkysCobblemonCosmetics {
 
         // Register items
         ModItems.register(modEventBus);
+
+        // Register loot modifiers
+        ModLootModifiers.register(modEventBus);
 
         LOGGER.info("Sky's Cobblemon Items initialized successfully");
     }

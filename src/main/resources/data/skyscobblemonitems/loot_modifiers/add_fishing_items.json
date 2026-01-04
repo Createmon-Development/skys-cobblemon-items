@@ -1,0 +1,13 @@
+{
+  "type": "skyscobblemonitems:add_item",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "cobblemon:fishing/pokerod_treasure"
+    }
+  ],
+  "items": [
+    "skyscobblemonitems:missing_clover",
+    "skyscobblemonitems:rusted_gold_pokeball"
+  ]
+}

@@ -24,3 +24,10 @@ type = "required"
 versionRange = "[1.21.1,1.22)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.skyscobblemonitems]]
+modId = "cobblemon"
+type = "required"
+versionRange = "[1.5,)"
+ordering = "AFTER"
+side = "BOTH"
