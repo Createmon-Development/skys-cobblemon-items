@@ -41,15 +41,18 @@ public class ModItems {
     public static final DeferredItem<Item> MIDNIGHT_BADGE = ITEMS.register("midnight_badge",
         () -> new GymBadgeItem(new Item.Properties()));
 
+    public static final DeferredItem<Item> GOOMY_BADGE = ITEMS.register("goomy_badge",
+        () -> new GymBadgeItem(new Item.Properties()));
+
     // Fishing items
     public static final DeferredItem<Item> MISSING_CLOVER = ITEMS.register("missing_clover",
-        () -> new Item(new Item.Properties().stacksTo(1)));
+        () -> new MissingCloverItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<Item> RUSTED_GOLD_POKEBALL = ITEMS.register("rusted_gold_pokeball",
-        () -> new Item(new Item.Properties()));
+        () -> new TooltipItem(new Item.Properties()));
 
     public static final DeferredItem<Item> POLISHED_GOLD_POKEBALL = ITEMS.register("polished_gold_pokeball",
-        () -> new Item(new Item.Properties()));
+        () -> new TooltipItem(new Item.Properties()));
 
     // Event items
     public static final DeferredItem<Item> EVENT_TICKET_RED = ITEMS.register("event_ticket_red",
@@ -73,6 +76,7 @@ public class ModItems {
             output.accept(WISTERIA_BADGE.get());
             output.accept(ROCK_BADGE.get());
             output.accept(MIDNIGHT_BADGE.get());
+            output.accept(GOOMY_BADGE.get());
             output.accept(MISSING_CLOVER.get());
             output.accept(RUSTED_GOLD_POKEBALL.get());
             output.accept(POLISHED_GOLD_POKEBALL.get());
