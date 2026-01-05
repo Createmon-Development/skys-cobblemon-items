@@ -16,8 +16,9 @@
   "item.skyscobblemonitems.missing_clover": "Missing Clover",
   "item.skyscobblemonitems.rusted_gold_pokeball": "Rusted Gold Pokeball",
   "item.skyscobblemonitems.polished_gold_pokeball": "Polished Gold Pokeball",
-  "item.skyscobblemonitems.event_ticket_red": "Event Ticket (Red)",
-  "item.skyscobblemonitems.event_ticket_purple": "Event Ticket (Purple)",
-  "item.skyscobblemonitems.event_ticket_green": "Event Ticket (Green)",
+  "item.skyscobblemonitems.polished_gold_pokeball.tooltip": "§6A glistening treasure, lost to time. A prized possession for any collector.",
+  "item.skyscobblemonitems.event_ticket_red": "Red Event Ticket",
+  "item.skyscobblemonitems.event_ticket_purple": "Purple Gamblers Ticket",
+  "item.skyscobblemonitems.event_ticket_green": "Green Event Ticket",
   "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
 }
