@@ -2,13 +2,17 @@ package com.skys.cobblemoncosmetics.events;
 
 import com.skys.cobblemoncosmetics.items.ModItems;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,6 +24,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  */
 @EventBusSubscriber
 public class SandpaperPolishingHandler {
+
+    // Tag for all sandpaper items from Create and its addons
+    private static final TagKey<Item> SANDPAPER_TAG = TagKey.create(Registries.ITEM, ResourceLocation.parse("create:sandpaper"));
 
     @SubscribeEvent
     public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
@@ -75,11 +82,10 @@ public class SandpaperPolishingHandler {
     }
 
     /**
-     * Check if an item is sandpaper from the Create mod.
+     * Check if an item is sandpaper from the Create mod or its addons.
+     * Uses the create:sandpaper tag for compatibility with all sandpaper variants.
      */
     private static boolean isSandpaper(ItemStack stack) {
-        // Check if the item's ID contains "sand_paper"
-        String itemId = stack.getItem().toString();
-        return itemId.contains("sand_paper");
+        return stack.is(SANDPAPER_TAG);
     }
 }
