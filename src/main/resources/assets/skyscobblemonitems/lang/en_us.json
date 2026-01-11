@@ -15,5 +15,7 @@
   "item.skyscobblemonitems.midnight_badge.tooltip": "For those that bump in the night.",
   "item.skyscobblemonitems.test_keystone_bracelet": "Test Keystone Bracelet",
   "tooltip.skyscobblemonitems.test_keystone_bracelet.tooltip": "TEST ITEM - Enables Mega Evolution",
+  "item.skyscobblemonitems.iron_maiden_mega_bracelet": "Iron Maiden Mega Bracelet",
+  "tooltip.skyscobblemonitems.iron_maiden_mega_bracelet.tooltip": "A broom-styled bracelet that enables Mega Evolution",
   "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
 }

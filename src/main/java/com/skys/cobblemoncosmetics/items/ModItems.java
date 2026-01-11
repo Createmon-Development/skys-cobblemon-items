@@ -45,6 +45,10 @@ public class ModItems {
     public static final DeferredItem<Item> TEST_KEYSTONE_BRACELET = ITEMS.register("test_keystone_bracelet",
         () -> new TestKeystoneBracelet(new Item.Properties().stacksTo(1)));
 
+    // Iron Maiden Mega Bracelet - Broom-styled mega bracelet
+    public static final DeferredItem<Item> IRON_MAIDEN_MEGA_BRACELET = ITEMS.register("iron_maiden_mega_bracelet",
+        () -> new IronMaidenMegaBracelet(new Item.Properties().stacksTo(1)));
+
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.skyscobblemonitems"))
@@ -58,6 +62,7 @@ public class ModItems {
             output.accept(ROCK_BADGE.get());
             output.accept(MIDNIGHT_BADGE.get());
             output.accept(TEST_KEYSTONE_BRACELET.get()); // TEST - Remove when done
+            output.accept(IRON_MAIDEN_MEGA_BRACELET.get());
         }).build());
 
     public static void register(IEventBus eventBus) {

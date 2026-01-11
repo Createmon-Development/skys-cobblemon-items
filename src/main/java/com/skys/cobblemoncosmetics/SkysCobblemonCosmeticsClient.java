@@ -1,6 +1,7 @@
 package com.skys.cobblemoncosmetics;
 
 import com.skys.cobblemoncosmetics.items.ModItems;
+import com.skys.cobblemoncosmetics.render.IronMaidenMegaBraceletRenderer;
 import com.skys.cobblemoncosmetics.render.SheathBeltRenderer;
 import io.wispforest.accessories.api.client.AccessoriesRendererRegistry;
 
@@ -15,6 +16,12 @@ public class SkysCobblemonCosmeticsClient {
         AccessoriesRendererRegistry.registerRenderer(
             ModItems.TEST_KEYSTONE_BRACELET.get(),
             SheathBeltRenderer::new
+        );
+
+        // Iron Maiden Mega Bracelet - renders broom in off-hand
+        AccessoriesRendererRegistry.registerRenderer(
+            ModItems.IRON_MAIDEN_MEGA_BRACELET.get(),
+            IronMaidenMegaBraceletRenderer::new
         );
 
         SkysCobblemonCosmetics.LOGGER.info("Client initialization complete");
