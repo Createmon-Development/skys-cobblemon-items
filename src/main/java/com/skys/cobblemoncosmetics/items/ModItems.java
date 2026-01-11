@@ -48,6 +48,28 @@ public class ModItems {
     // Iron Maiden Mega Bracelet - Broom-styled mega bracelet
     public static final DeferredItem<Item> IRON_MAIDEN_MEGA_BRACELET = ITEMS.register("iron_maiden_mega_bracelet",
         () -> new IronMaidenMegaBracelet(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> GOOMY_BADGE = ITEMS.register("goomy_badge",
+        () -> new GymBadgeItem(new Item.Properties()));
+
+    // Fishing items
+    public static final DeferredItem<Item> MISSING_CLOVER = ITEMS.register("missing_clover",
+        () -> new MissingCloverItem(new Item.Properties().stacksTo(1)));
+
+    public static final DeferredItem<Item> RUSTED_GOLD_POKEBALL = ITEMS.register("rusted_gold_pokeball",
+        () -> new TooltipItem(new Item.Properties()));
+
+    public static final DeferredItem<Item> POLISHED_GOLD_POKEBALL = ITEMS.register("polished_gold_pokeball",
+        () -> new TooltipItem(new Item.Properties()));
+
+    // Event items
+    public static final DeferredItem<Item> EVENT_TICKET_RED = ITEMS.register("event_ticket_red",
+        () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> EVENT_TICKET_PURPLE = ITEMS.register("event_ticket_purple",
+        () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> EVENT_TICKET_GREEN = ITEMS.register("event_ticket_green",
+        () -> new Item(new Item.Properties()));
 
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
@@ -63,6 +85,13 @@ public class ModItems {
             output.accept(MIDNIGHT_BADGE.get());
             output.accept(TEST_KEYSTONE_BRACELET.get()); // TEST - Remove when done
             output.accept(IRON_MAIDEN_MEGA_BRACELET.get());
+            output.accept(GOOMY_BADGE.get());
+            output.accept(MISSING_CLOVER.get());
+            output.accept(RUSTED_GOLD_POKEBALL.get());
+            output.accept(POLISHED_GOLD_POKEBALL.get());
+            output.accept(EVENT_TICKET_RED.get());
+            output.accept(EVENT_TICKET_PURPLE.get());
+            output.accept(EVENT_TICKET_GREEN.get());
         }).build());
 
     public static void register(IEventBus eventBus) {

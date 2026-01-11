@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "skyscobblemonitems:item/fishing/rusted_gold_pokeball"
+  }
+}

@@ -1,7 +1,6 @@
 package com.skys.cobblemoncosmetics;
 
 import com.skys.cobblemoncosmetics.items.ModItems;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -24,6 +23,9 @@ public class SkysCobblemonCosmetics {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(this::clientSetup);
         }
+
+        // Register loot modifiers
+        ModLootModifiers.register(modEventBus);
 
         LOGGER.info("Sky's Cobblemon Items initialized successfully");
     }
