@@ -1,6 +1,8 @@
 package com.skys.cobblemoncosmetics;
 
 import com.skys.cobblemoncosmetics.items.ModItems;
+import com.skys.cobblemoncosmetics.loot.ModLootModifiers;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
