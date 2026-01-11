@@ -26,5 +26,7 @@
   "item.skyscobblemonitems.event_ticket_red": "Red Event Ticket",
   "item.skyscobblemonitems.event_ticket_purple": "Purple Gamblers Ticket",
   "item.skyscobblemonitems.event_ticket_green": "Green Event Ticket",
+  "item.skyscobblemonitems.mystery_orb": "Mysterious Orb",
+  "subtitles.skyscobblemonitems.orb_whisper": "Orb whispers",
   "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
 }

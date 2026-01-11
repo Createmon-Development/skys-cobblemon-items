@@ -1,0 +1,11 @@
+{
+  "orb_whisper": {
+    "sounds": [
+      {
+        "name": "skyscobblemonitems:hunt/orb_whisper",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.skyscobblemonitems.orb_whisper"
+  }
+}

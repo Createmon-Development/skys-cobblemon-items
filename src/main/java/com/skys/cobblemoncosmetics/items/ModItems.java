@@ -1,6 +1,7 @@
 package com.skys.cobblemoncosmetics.items;
 
 import com.skys.cobblemoncosmetics.SkysCobblemonCosmetics;
+import com.skys.cobblemoncosmetics.hunt.MysteryOrbItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -67,6 +68,10 @@ public class ModItems {
     public static final DeferredItem<Item> EVENT_TICKET_GREEN = ITEMS.register("event_ticket_green",
         () -> new Item(new Item.Properties()));
 
+    // Hunt items
+    public static final DeferredItem<Item> MYSTERY_ORB = ITEMS.register("mystery_orb",
+        () -> new MysteryOrbItem(new Item.Properties()));
+
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.skyscobblemonitems"))
@@ -87,6 +92,7 @@ public class ModItems {
             output.accept(EVENT_TICKET_RED.get());
             output.accept(EVENT_TICKET_PURPLE.get());
             output.accept(EVENT_TICKET_GREEN.get());
+            output.accept(MYSTERY_ORB.get());
         }).build());
 
     public static void register(IEventBus eventBus) {

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "skyscobblemonitems:test/crop_corn_7"
+  }
+}

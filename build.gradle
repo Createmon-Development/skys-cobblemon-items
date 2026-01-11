@@ -15,6 +15,17 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
     mavenCentral()
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
+        url = "https://maven.impactdev.net/repository/development/"
+    }
+    maven {
+        name = "Kotlin for Forge"
+        url = "https://thedarkcolour.github.io/KotlinForForge/"
+    }
 }
 
 runs {
@@ -35,6 +46,12 @@ runs {
 
 dependencies {
     implementation "net.neoforged:neoforge:21.1.72"
+
+    // Kotlin for Forge - required by Cobblemon
+    implementation "thedarkcolour:kotlinforforge-neoforge:5.6.0"
+
+    // Cobblemon dependency from Modrinth
+    compileOnly "com.cobblemon:neoforge:1.7.1+1.21.1"
 }
 
 tasks.withType(JavaCompile).configureEach {
