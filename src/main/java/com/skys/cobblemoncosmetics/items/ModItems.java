@@ -41,6 +41,13 @@ public class ModItems {
     public static final DeferredItem<Item> MIDNIGHT_BADGE = ITEMS.register("midnight_badge",
         () -> new GymBadgeItem(new Item.Properties()));
 
+    // TEST ITEM - Remove when testing is complete
+    public static final DeferredItem<Item> TEST_KEYSTONE_BRACELET = ITEMS.register("test_keystone_bracelet",
+        () -> new TestKeystoneBracelet(new Item.Properties().stacksTo(1)));
+
+    // Iron Maiden Mega Bracelet - Broom-styled mega bracelet
+    public static final DeferredItem<Item> IRON_MAIDEN_MEGA_BRACELET = ITEMS.register("iron_maiden_mega_bracelet",
+        () -> new IronMaidenMegaBracelet(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> GOOMY_BADGE = ITEMS.register("goomy_badge",
         () -> new GymBadgeItem(new Item.Properties()));
 
@@ -76,6 +83,8 @@ public class ModItems {
             output.accept(WISTERIA_BADGE.get());
             output.accept(ROCK_BADGE.get());
             output.accept(MIDNIGHT_BADGE.get());
+            output.accept(TEST_KEYSTONE_BRACELET.get()); // TEST - Remove when done
+            output.accept(IRON_MAIDEN_MEGA_BRACELET.get());
             output.accept(GOOMY_BADGE.get());
             output.accept(MISSING_CLOVER.get());
             output.accept(RUSTED_GOLD_POKEBALL.get());
