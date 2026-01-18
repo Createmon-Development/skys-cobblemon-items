@@ -1,5 +1,6 @@
 package com.skys.cobblemoncosmetics;
 
+import com.skys.cobblemoncosmetics.hunt.HuntItemProperties;
 import com.skys.cobblemoncosmetics.items.ModItems;
 import com.skys.cobblemoncosmetics.render.IronMaidenMegaBraceletRenderer;
 import com.skys.cobblemoncosmetics.render.SheathBeltRenderer;
@@ -23,6 +24,9 @@ public class SkysCobblemonCosmeticsClient {
             ModItems.IRON_MAIDEN_MEGA_BRACELET.get(),
             IronMaidenMegaBraceletRenderer::new
         );
+
+        // Register hunt item properties for model overrides (orb states, tablet glow)
+        HuntItemProperties.register();
 
         SkysCobblemonCosmetics.LOGGER.info("Client initialization complete");
     }

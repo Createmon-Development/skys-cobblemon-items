@@ -1,0 +1,16 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "skyscobblemonitems:item/CASH/tablet"
+  },
+  "overrides": [
+    {
+      "predicate": { "skyscobblemonitems:tablet_glowing": 0.0 },
+      "model": "skyscobblemonitems:item/runic_cipher_tablet_faded"
+    },
+    {
+      "predicate": { "skyscobblemonitems:tablet_glowing": 1.0 },
+      "model": "skyscobblemonitems:item/runic_cipher_tablet_glow"
+    }
+  ]
+}

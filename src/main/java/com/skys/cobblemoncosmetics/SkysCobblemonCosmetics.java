@@ -1,5 +1,7 @@
 package com.skys.cobblemoncosmetics;
 
+import com.skys.cobblemoncosmetics.hunt.BattleVictoryHandler;
+import com.skys.cobblemoncosmetics.hunt.HuntDataComponents;
 import com.skys.cobblemoncosmetics.items.ModItems;
 import com.skys.cobblemoncosmetics.loot.ModLootModifiers;
 import net.neoforged.api.distmarker.Dist;
@@ -21,6 +23,9 @@ public class SkysCobblemonCosmetics {
         // Register items
         ModItems.register(modEventBus);
 
+        // Register hunt data components
+        HuntDataComponents.register(modEventBus);
+
         // TEST - Client setup for renderer registration
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(this::clientSetup);
@@ -28,6 +33,9 @@ public class SkysCobblemonCosmetics {
 
         // Register loot modifiers
         ModLootModifiers.register(modEventBus);
+
+        // Register battle victory handler for Crystal Ascendancy hunt
+        BattleVictoryHandler.register();
 
         LOGGER.info("Sky's Cobblemon Items initialized successfully");
     }

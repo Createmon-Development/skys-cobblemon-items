@@ -28,5 +28,12 @@
   "item.skyscobblemonitems.event_ticket_red": "Red Event Ticket",
   "item.skyscobblemonitems.event_ticket_purple": "Purple Gamblers Ticket",
   "item.skyscobblemonitems.event_ticket_green": "Green Event Ticket",
+  "item.skyscobblemonitems.mysterious_orb": "Mysterious Orb",
+  "item.skyscobblemonitems.mysterious_orb.tooltip.empty": "§7The orb wishes to feel alive",
+  "item.skyscobblemonitems.mysterious_orb.tooltip.filling": "§dSymbols of light writhe inside the orb",
+  "item.skyscobblemonitems.mysterious_orb.tooltip.filled": "§6The symbols have aligned. Perhaps someone can read them...",
+  "item.skyscobblemonitems.runic_cipher_tablet": "Runic Cipher Tablet",
+  "item.skyscobblemonitems.runic_cipher_tablet.tooltip.faded": "§7Ancient runes cover the surface, but they are too faded to read...",
+  "item.skyscobblemonitems.runic_cipher_tablet.tooltip.glowing": "§aThe runes glow with an ethereal light, revealing their secrets",
   "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
 }
