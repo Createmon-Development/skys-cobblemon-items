@@ -1,6 +1,6 @@
 package com.skys.cobblemoncosmetics;
 
-import com.skys.cobblemoncosmetics.hunt.BattleVictoryHandler;
+import com.skys.cobblemoncosmetics.hunt.BattleFaintHandler;
 import com.skys.cobblemoncosmetics.hunt.HuntDataComponents;
 import com.skys.cobblemoncosmetics.items.ModItems;
 import com.skys.cobblemoncosmetics.loot.ModLootModifiers;
@@ -34,8 +34,8 @@ public class SkysCobblemonCosmetics {
         // Register loot modifiers
         ModLootModifiers.register(modEventBus);
 
-        // Register battle victory handler for Crystal Ascendancy hunt
-        BattleVictoryHandler.register();
+        // Register battle faint handler for Crystal Ascendancy hunt
+        BattleFaintHandler.register();
 
         LOGGER.info("Sky's Cobblemon Items initialized successfully");
     }

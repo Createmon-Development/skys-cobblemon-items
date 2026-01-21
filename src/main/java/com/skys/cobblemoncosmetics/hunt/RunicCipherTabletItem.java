@@ -72,31 +72,56 @@ public class RunicCipherTabletItem extends Item {
                 .withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC));
             tooltipComponents.add(Component.empty());
 
-            // The cipher key/translation
-            tooltipComponents.add(Component.literal("=== RUNIC CIPHER ===")
+            // The cipher key/translation - Full alphabet
+            tooltipComponents.add(Component.literal("══ RUNIC CIPHER ══")
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
             tooltipComponents.add(Component.empty());
 
-            // Show the rune to letter mapping
-            tooltipComponents.add(Component.literal(HuntConfig.UNSCRAMBLED_RUNES)
-                .withStyle(ChatFormatting.LIGHT_PURPLE));
-            tooltipComponents.add(Component.literal("        ↓")
+            // Display alphabet in rows of 9
+            tooltipComponents.add(Component.literal("Letters:")
                 .withStyle(ChatFormatting.GRAY));
-            tooltipComponents.add(Component.literal(HuntConfig.DECODED_MESSAGE)
-                .withStyle(ChatFormatting.GREEN));
+
+            // Row 1: A-I
+            StringBuilder row1 = new StringBuilder();
+            for (int i = 0; i < 9; i++) {
+                row1.append(HuntConfig.RUNIC_ALPHABET[i]);
+                if (i < 8) row1.append(" ");
+            }
+            tooltipComponents.add(Component.literal(row1.toString())
+                .withStyle(ChatFormatting.LIGHT_PURPLE));
+
+            // Row 2: J-R
+            StringBuilder row2 = new StringBuilder();
+            for (int i = 9; i < 18; i++) {
+                row2.append(HuntConfig.RUNIC_ALPHABET[i]);
+                if (i < 17) row2.append(" ");
+            }
+            tooltipComponents.add(Component.literal(row2.toString())
+                .withStyle(ChatFormatting.LIGHT_PURPLE));
+
+            // Row 3: S-Z
+            StringBuilder row3 = new StringBuilder();
+            for (int i = 18; i < 26; i++) {
+                row3.append(HuntConfig.RUNIC_ALPHABET[i]);
+                if (i < 25) row3.append(" ");
+            }
+            tooltipComponents.add(Component.literal(row3.toString())
+                .withStyle(ChatFormatting.LIGHT_PURPLE));
 
             tooltipComponents.add(Component.empty());
 
-            // The coordinate hints
-            tooltipComponents.add(Component.literal("=== TO FIND THE PATH ===")
-                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
-            tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.literal("X - Look to the stars")
-                .withStyle(ChatFormatting.YELLOW));
-            tooltipComponents.add(Component.literal("Y - Hidden within these very words")
-                .withStyle(ChatFormatting.YELLOW));
-            tooltipComponents.add(Component.literal("Z - Return to the world's origin")
-                .withStyle(ChatFormatting.YELLOW));
+            // Display numbers
+            tooltipComponents.add(Component.literal("Numbers:")
+                .withStyle(ChatFormatting.GRAY));
+
+            // Numbers 0-9 in one row
+            StringBuilder numRow = new StringBuilder();
+            for (int i = 0; i < 10; i++) {
+                numRow.append(HuntConfig.RUNIC_NUMBERS[i]);
+                if (i < 9) numRow.append(" ");
+            }
+            tooltipComponents.add(Component.literal(numRow.toString())
+                .withStyle(ChatFormatting.AQUA));
         }
 
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);

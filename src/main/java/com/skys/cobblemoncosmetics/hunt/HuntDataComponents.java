@@ -36,6 +36,32 @@ public class HuntDataComponents {
         DATA_COMPONENTS.registerComponentType("tablet_glowing", builder ->
             builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
 
+    // Bitmask for revealed X coordinate digits (bits 0-3 for positions 0-3)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ORB_X_DIGITS =
+        DATA_COMPONENTS.registerComponentType("orb_x_digits", builder ->
+            builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
+
+    // Bitmask for revealed Y coordinate digits (bits 0-1 for positions 0-1)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ORB_Y_DIGITS =
+        DATA_COMPONENTS.registerComponentType("orb_y_digits", builder ->
+            builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
+
+    // Bitmask for revealed Z coordinate digits (bits 0-3 for positions 0-3)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ORB_Z_DIGITS =
+        DATA_COMPONENTS.registerComponentType("orb_z_digits", builder ->
+            builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
+
+    // Custom hidden tag for Y coordinate hint (poem-fitting concealment)
+    // Format: "depth_of_fathoms" - a hidden reference the player must decode
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> ORB_FATHOM_MARK =
+        DATA_COMPONENTS.registerComponentType("fathom_mark", builder ->
+            builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
+
+    // Current proximity state for origin puzzle (0=none, 1=far, 2=medium, 3=close, 4=exact)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ORB_PROXIMITY =
+        DATA_COMPONENTS.registerComponentType("orb_proximity", builder ->
+            builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
+
     // Orb states enum for clarity
     public enum OrbState {
         EMPTY(0),

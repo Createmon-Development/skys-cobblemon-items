@@ -2,8 +2,9 @@ package com.skys.cobblemoncosmetics.hunt;
 
 import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
-import com.cobblemon.mod.common.api.events.battles.BattleVictoryEvent;
+import com.cobblemon.mod.common.api.events.battles.BattleFaintedEvent;
 import com.cobblemon.mod.common.battles.actor.PlayerBattleActor;
+import com.cobblemon.mod.common.battles.pokemon.BattlePokemon;
 import com.skys.cobblemoncosmetics.SkysCobblemonCosmetics;
 import com.skys.cobblemoncosmetics.items.ModItems;
 import kotlin.Unit;
@@ -14,33 +15,39 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Handles battle victory events for the Crystal Ascendancy hunt.
- * When a player wins a battle while holding the Mysterious Orb, increment its kill count.
+ * Handles battle faint events for the Crystal Ascendancy hunt.
+ * When an opponent's Pokemon faints while the player has the Mysterious Orb, increment its kill count.
  */
-public class BattleVictoryHandler {
+public class BattleFaintHandler {
 
     public static void register() {
-        CobblemonEvents.BATTLE_VICTORY.subscribe(Priority.NORMAL, event -> {
-            handleBattleVictory(event);
+        CobblemonEvents.BATTLE_FAINTED.subscribe(Priority.NORMAL, event -> {
+            handleBattleFainted(event);
             return Unit.INSTANCE;
         });
-        SkysCobblemonCosmetics.LOGGER.info("Registered battle victory handler for Crystal Ascendancy hunt");
+        SkysCobblemonCosmetics.LOGGER.info("Registered battle faint handler for Crystal Ascendancy hunt");
     }
 
-    private static void handleBattleVictory(BattleVictoryEvent event) {
-        // Get the winners from the battle
-        event.getWinners().forEach(battleActor -> {
-            // Check if the winner is a player actor
+    private static void handleBattleFainted(BattleFaintedEvent event) {
+        BattlePokemon faintedPokemon = event.getKilled();
+
+        // Get the battle and check all actors
+        event.getBattle().getActors().forEach(battleActor -> {
+            // Check if this actor is a player
             if (battleActor instanceof PlayerBattleActor playerActor) {
                 ServerPlayer player = playerActor.getEntity();
                 if (player != null) {
-                    processPlayerVictory(player, event);
+                    // Check if the fainted Pokemon belongs to the opponent (not this player)
+                    // The fainted Pokemon's actor should NOT be the player we're checking
+                    if (faintedPokemon.getActor() != battleActor) {
+                        processOpponentFaint(player);
+                    }
                 }
             }
         });
     }
 
-    private static void processPlayerVictory(ServerPlayer player, BattleVictoryEvent event) {
+    private static void processOpponentFaint(ServerPlayer player) {
         // Check player's inventory for Mysterious Orb
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);
@@ -52,7 +59,7 @@ public class BattleVictoryHandler {
                 if (currentState != HuntDataComponents.OrbState.FINAL) {
                     incrementOrbProgress(player, stack);
                 }
-                return; // Only process one orb per battle
+                return; // Only process one orb per faint
             }
         }
     }
@@ -71,7 +78,7 @@ public class BattleVictoryHandler {
             revealedRunes++;
 
             // Notify player of rune reveal
-            player.sendSystemMessage(Component.literal("§dA new rune materializes within the orb... (" + revealedRunes + "/" + HuntConfig.TOTAL_RUNES + ")"));
+            player.sendSystemMessage(Component.literal("§dA new rune materializes within the orb..."));
 
             // Play mystical sound
             player.level().playSound(null, player.blockPosition(),

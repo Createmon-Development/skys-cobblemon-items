@@ -32,6 +32,7 @@ public class CrystalAscendancyManager extends SavedData {
     // Player tracking
     private final Set<UUID> playersInRace = new HashSet<>();
     private final Map<UUID, Long> playerCooldowns = new HashMap<>();
+    private final Map<UUID, Integer> playerStages = new HashMap<>(); // Hunt stage progress (1-5)
 
     public CrystalAscendancyManager() {
     }
@@ -134,6 +135,43 @@ public class CrystalAscendancyManager extends SavedData {
         }
     }
 
+    // === Stage Progress Methods ===
+
+    /**
+     * Gets the current hunt stage for a player.
+     * Stages: 1=Not started, 2=Has orb, 3=Orb filled, 4=Has tablet, 5=Complete
+     */
+    public int getPlayerStage(UUID playerUUID) {
+        return playerStages.getOrDefault(playerUUID, 1);
+    }
+
+    /**
+     * Sets the hunt stage for a player.
+     */
+    public void setPlayerStage(UUID playerUUID, int stage) {
+        if (stage < 1) stage = 1;
+        if (stage > 5) stage = 5;
+        playerStages.put(playerUUID, stage);
+        setDirty();
+        SkysCobblemonCosmetics.LOGGER.info("Player {} hunt stage set to {}", playerUUID, stage);
+    }
+
+    /**
+     * Gets all player stages for debugging/admin purposes.
+     */
+    public Map<UUID, Integer> getAllPlayerStages() {
+        return new HashMap<>(playerStages);
+    }
+
+    /**
+     * Clears a player's stage progress.
+     */
+    public void clearPlayerStage(UUID playerUUID) {
+        if (playerStages.remove(playerUUID) != null) {
+            setDirty();
+        }
+    }
+
     // === Serialization ===
 
     @Override
@@ -165,6 +203,16 @@ public class CrystalAscendancyManager extends SavedData {
         }
         tag.put("cooldowns", cooldownList);
 
+        // Save player stages
+        ListTag stageList = new ListTag();
+        for (Map.Entry<UUID, Integer> entry : playerStages.entrySet()) {
+            CompoundTag stageTag = new CompoundTag();
+            stageTag.putUUID("uuid", entry.getKey());
+            stageTag.putInt("stage", entry.getValue());
+            stageList.add(stageTag);
+        }
+        tag.put("playerStages", stageList);
+
         return tag;
     }
 
@@ -193,6 +241,16 @@ public class CrystalAscendancyManager extends SavedData {
             manager.playerCooldowns.put(
                 cooldownTag.getUUID("uuid"),
                 cooldownTag.getLong("endTime")
+            );
+        }
+
+        // Load player stages
+        ListTag stageList = tag.getList("playerStages", Tag.TAG_COMPOUND);
+        for (int i = 0; i < stageList.size(); i++) {
+            CompoundTag stageTag = stageList.getCompound(i);
+            manager.playerStages.put(
+                stageTag.getUUID("uuid"),
+                stageTag.getInt("stage")
             );
         }
 

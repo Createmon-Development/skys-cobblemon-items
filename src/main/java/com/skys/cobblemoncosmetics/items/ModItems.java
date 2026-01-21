@@ -2,6 +2,7 @@ package com.skys.cobblemoncosmetics.items;
 
 import com.skys.cobblemoncosmetics.SkysCobblemonCosmetics;
 import com.skys.cobblemoncosmetics.hunt.MysteriousOrbItem;
+import com.skys.cobblemoncosmetics.hunt.MysteriousParchmentItem;
 import com.skys.cobblemoncosmetics.hunt.RunicCipherTabletItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -43,9 +44,8 @@ public class ModItems {
     public static final DeferredItem<Item> MIDNIGHT_BADGE = ITEMS.register("midnight_badge",
         () -> new GymBadgeItem(new Item.Properties()));
 
-    // TEST ITEM - Remove when testing is complete
-    public static final DeferredItem<Item> TEST_KEYSTONE_BRACELET = ITEMS.register("test_keystone_bracelet",
-        () -> new TestKeystoneBracelet(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> BEAT_BADGE = ITEMS.register("beat_badge",
+        () -> new GymBadgeItem(new Item.Properties()));
 
     // Iron Maiden Mega Bracelet - Broom-styled mega bracelet
     public static final DeferredItem<Item> IRON_MAIDEN_MEGA_BRACELET = ITEMS.register("iron_maiden_mega_bracelet",
@@ -80,6 +80,9 @@ public class ModItems {
     public static final DeferredItem<Item> RUNIC_CIPHER_TABLET = ITEMS.register("runic_cipher_tablet",
         () -> new RunicCipherTabletItem(new Item.Properties().stacksTo(1)));
 
+    public static final DeferredItem<Item> MYSTERIOUS_PARCHMENT = ITEMS.register("mysterious_parchment",
+        () -> new MysteriousParchmentItem(new Item.Properties().stacksTo(1)));
+
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.skyscobblemonitems"))
@@ -92,7 +95,7 @@ public class ModItems {
             output.accept(WISTERIA_BADGE.get());
             output.accept(ROCK_BADGE.get());
             output.accept(MIDNIGHT_BADGE.get());
-            output.accept(TEST_KEYSTONE_BRACELET.get()); // TEST - Remove when done
+            output.accept(BEAT_BADGE.get());
             output.accept(IRON_MAIDEN_MEGA_BRACELET.get());
             output.accept(GOOMY_BADGE.get());
             output.accept(MISSING_CLOVER.get());
@@ -103,6 +106,7 @@ public class ModItems {
             output.accept(EVENT_TICKET_GREEN.get());
             output.accept(MYSTERIOUS_ORB.get());
             output.accept(RUNIC_CIPHER_TABLET.get());
+            output.accept(MYSTERIOUS_PARCHMENT.get());
         }).build());
 
     public static void register(IEventBus eventBus) {
