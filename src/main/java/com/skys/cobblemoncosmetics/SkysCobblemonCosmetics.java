@@ -1,5 +1,6 @@
 package com.skys.cobblemoncosmetics;
 
+import com.skys.cobblemoncosmetics.blocks.ModBlocks;
 import com.skys.cobblemoncosmetics.hunt.BattleFaintHandler;
 import com.skys.cobblemoncosmetics.hunt.HuntDataComponents;
 import com.skys.cobblemoncosmetics.items.ModItems;
@@ -22,6 +23,9 @@ public class SkysCobblemonCosmetics {
 
         // Register items
         ModItems.register(modEventBus);
+
+        // Register blocks
+        ModBlocks.register(modEventBus);
 
         // Register hunt data components
         HuntDataComponents.register(modEventBus);

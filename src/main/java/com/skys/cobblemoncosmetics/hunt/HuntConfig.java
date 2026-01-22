@@ -27,15 +27,32 @@ public class HuntConfig {
     public static final int ORIGIN_HUM_CLOSE = 25;       // Blocks from world origin for "even louder" hum
     // Note: Origin exact detection requires standing exactly at 0,0 (X and Z both 0)
 
-    // Cove of Origin coordinates (the target location for the hunt)
-    public static final int COVE_X = 2137;               // X coordinate (revealed via stars)
-    public static final int COVE_Y = -12;                // Y coordinate (hidden in custom tag)
-    public static final int COVE_Z = -847;               // Z coordinate (revealed at world origin)
+    // === Hunt Location Coordinates ===
 
-    // Individual digits for coordinate puzzles
-    public static final String[] X_DIGITS = {"2", "1", "3", "7"};  // COVE_X = 2137
-    public static final String[] Y_DIGITS = {"1", "2"};             // COVE_Y = -12 (shown as 12)
-    public static final String[] Z_DIGITS = {"0", "8", "4", "7"};   // COVE_Z = -847 (shown as 0847)
+    // Cove - The final destination of the hunt
+    public static final int COVE_X = 2889;
+    public static final int COVE_Y = -42;
+    public static final int COVE_Z = 2233;
+
+    // Temple - Starting area for the hunt
+    public static final int TEMPLE_X = 3200;
+    public static final int TEMPLE_Y = 97;
+    public static final int TEMPLE_Z = 6480;
+
+    // Treasure Hunter's Assistant - NPC location
+    public static final int TREASURE_HUNTER_X = 3112;
+    public static final int TREASURE_HUNTER_Y = 63;
+    public static final int TREASURE_HUNTER_Z = 6339;
+
+    // Spawn - World spawn point
+    public static final int SPAWN_X = 22;
+    public static final int SPAWN_Y = 158;
+    public static final int SPAWN_Z = -9;
+
+    // Individual digits for coordinate puzzles (Cove coordinates)
+    public static final String[] X_DIGITS = {"2", "8", "8", "9"};  // COVE_X = 2889
+    public static final String[] Y_DIGITS = {"4", "2"};             // COVE_Y = -42 (shown as 42)
+    public static final String[] Z_DIGITS = {"2", "2", "3", "3"};   // COVE_Z = 2233
 
     // Runic text - The revealed runes that decode to "xxxx yy zzzz - Awaken me" by default
     // Coordinates are revealed dynamically through puzzles
@@ -44,9 +61,9 @@ public class HuntConfig {
     public static final String DEFAULT_MESSAGE = "xxxx yy zzzz - Awaken me";
 
     // The actual rune sequence for coordinates (used when digits are revealed)
-    // 2=ᛮ 1=ᛝ 3=ᛯ 7=ᚩ | 1=ᛝ 2=ᛮ | 0=ᛜ 8=ᚪ 4=ᛰ 7=ᚩ
-    public static final String UNSCRAMBLED_RUNES = "ᛮᛝᛯᚩ ᛝᛮ ᛜᚪᛰᚩ - ᚨᚹᚨᚴᛖᚾ ᛗᛖ";
-    public static final String DECODED_MESSAGE = "2137 12 0847 - Awaken me";
+    // 2=ᛮ 8=ᚪ 8=ᚪ 9=ᚫ | 4=ᛰ 2=ᛮ | 2=ᛮ 2=ᛮ 3=ᛯ 3=ᛯ
+    public static final String UNSCRAMBLED_RUNES = "ᛮᚪᚪᚫ ᛰᛮ ᛮᛮᛯᛯ - ᚨᚹᚨᚴᛖᚾ ᛗᛖ";
+    public static final String DECODED_MESSAGE = "2889 42 2233 - Awaken me";
 
     // Full runic cipher alphabet (rune=letter format, lowercase) - ALL UNIQUE
     public static final String[] RUNIC_ALPHABET = {

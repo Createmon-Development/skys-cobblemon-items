@@ -36,5 +36,7 @@
   "item.skyscobblemonitems.runic_cipher_tablet.tooltip.faded": "§7Ancient runes cover the surface, but they are too faded to read.",
   "item.skyscobblemonitems.runic_cipher_tablet.tooltip.glowing": "§aThe runes glow with an ethereal light, revealing their secrets.",
   "item.skyscobblemonitems.mysterious_parchment": "Mysterious Parchment",
+  "item.skyscobblemonitems.temple_treasure_map": "Temple Treasure Map",
+  "block.skyscobblemonitems.runic_altar": "Runic Altar",
   "itemGroup.skyscobblemonitems": "Sky's Cobblemon Items"
 }

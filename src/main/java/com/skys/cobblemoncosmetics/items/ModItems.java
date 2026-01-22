@@ -1,9 +1,11 @@
 package com.skys.cobblemoncosmetics.items;
 
 import com.skys.cobblemoncosmetics.SkysCobblemonCosmetics;
+import com.skys.cobblemoncosmetics.blocks.ModBlocks;
 import com.skys.cobblemoncosmetics.hunt.MysteriousOrbItem;
 import com.skys.cobblemoncosmetics.hunt.MysteriousParchmentItem;
 import com.skys.cobblemoncosmetics.hunt.RunicCipherTabletItem;
+import com.skys.cobblemoncosmetics.hunt.TempleTreasureMapItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -83,6 +85,11 @@ public class ModItems {
     public static final DeferredItem<Item> MYSTERIOUS_PARCHMENT = ITEMS.register("mysterious_parchment",
         () -> new MysteriousParchmentItem(new Item.Properties().stacksTo(1)));
 
+    // Temple Treasure Map - Given by Treasure Hunter's Assistant during step 3
+    // NOTE: This creates a vanilla filled_map with custom decorations when given to player
+    public static final DeferredItem<Item> TEMPLE_TREASURE_MAP = ITEMS.register("temple_treasure_map",
+        () -> new TempleTreasureMapItem(new Item.Properties().stacksTo(1)));
+
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.skyscobblemonitems"))
@@ -107,6 +114,9 @@ public class ModItems {
             output.accept(MYSTERIOUS_ORB.get());
             output.accept(RUNIC_CIPHER_TABLET.get());
             output.accept(MYSTERIOUS_PARCHMENT.get());
+            output.accept(TEMPLE_TREASURE_MAP.get());
+            // Block items
+            output.accept(ModBlocks.RUNIC_ALTAR_ITEM.get());
         }).build());
 
     public static void register(IEventBus eventBus) {

@@ -31,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
  * 3 - Has filled orb (runes revealed)
  * 4 - Has filled orb + faded tablet
  * 5 - Has filled orb + glowing tablet + parchment (complete)
+ * 6 - Same as 5, but with X and Z coordinates solved (green)
  */
 public class HuntCommands {
 
@@ -39,7 +40,7 @@ public class HuntCommands {
             .requires(source -> source.hasPermission(2)) // OP level 2 required
             .then(Commands.literal("stage")
                 .then(Commands.argument("player", EntityArgument.player())
-                    .then(Commands.argument("stage", IntegerArgumentType.integer(1, 5))
+                    .then(Commands.argument("stage", IntegerArgumentType.integer(1, 6))
                         .executes(context -> {
                             ServerPlayer player = EntityArgument.getPlayer(context, "player");
                             int stage = IntegerArgumentType.getInteger(context, "stage");
@@ -112,6 +113,25 @@ public class HuntCommands {
                 ItemStack parchment = new ItemStack(ModItems.MYSTERIOUS_PARCHMENT.get());
                 player.getInventory().add(parchment);
             }
+            case 6 -> {
+                // Stage 6: Same as 5, but with X and Z coordinates solved (green)
+                ItemStack orb = new ItemStack(ModItems.MYSTERIOUS_ORB.get());
+                MysteriousOrbItem.setOrbState(orb, HuntDataComponents.OrbState.FINAL);
+                MysteriousOrbItem.setKillCount(orb, 0);
+                MysteriousOrbItem.setRevealedRunes(orb, HuntConfig.TOTAL_RUNES);
+                // Reveal all X digits (bits 0-3 = 0b1111 = 15)
+                MysteriousOrbItem.setXDigits(orb, 0b1111);
+                // Reveal all Z digits (bits 0-3 = 0b1111 = 15)
+                MysteriousOrbItem.setZDigits(orb, 0b1111);
+                player.getInventory().add(orb);
+
+                ItemStack tablet = new ItemStack(ModItems.RUNIC_CIPHER_TABLET.get());
+                RunicCipherTabletItem.setGlowing(tablet, true);
+                player.getInventory().add(tablet);
+
+                ItemStack parchment = new ItemStack(ModItems.MYSTERIOUS_PARCHMENT.get());
+                player.getInventory().add(parchment);
+            }
             // Stage 1: No items (just reset)
         }
 
@@ -140,6 +160,7 @@ public class HuntCommands {
             case 3 -> "Orb Filled (Runes Revealed)";
             case 4 -> "Has Tablet (Faded)";
             case 5 -> "Complete (Has Parchment)";
+            case 6 -> "Complete (X & Z Solved)";
             default -> "Unknown";
         };
 
