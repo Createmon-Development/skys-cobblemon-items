@@ -1,0 +1,24 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "skyscobblemonitems:item/CASH/orb_empty1"
+  },
+  "overrides": [
+    {
+      "predicate": { "skyscobblemonitems:orb_state": 0.0 },
+      "model": "skyscobblemonitems:item/mysterious_orb_empty"
+    },
+    {
+      "predicate": { "skyscobblemonitems:orb_state": 0.25 },
+      "model": "skyscobblemonitems:item/mysterious_orb_stage1"
+    },
+    {
+      "predicate": { "skyscobblemonitems:orb_state": 0.5 },
+      "model": "skyscobblemonitems:item/mysterious_orb_half"
+    },
+    {
+      "predicate": { "skyscobblemonitems:orb_state": 0.75 },
+      "model": "skyscobblemonitems:item/mysterious_orb_final"
+    }
+  ]
+}

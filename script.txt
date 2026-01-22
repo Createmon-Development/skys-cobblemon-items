@@ -1,0 +1,54 @@
+Script:
+Broadcast:
+	- Race begins
+		○ "AN ANCIENT POWER STIRS. THE RACE FOR THE COBALT ASCENSION HAS BEGUN."
+	- Player enters race
+		○ "Player <player_name> has entered the race for the cobalt ascension."
+Story Line:
+Lines marked with the name of a merchant (i.e.: Treasure Hunter) should be sent when interacting with the respective merchant. Lines marked with "to player" are atmospheric messages that should be sent in black/grey italics
+Step 1: Global broadcast triggers above
+Step 2:
+	- After filling the orb:
+		○ (to player, and in orb description) The orb shimmers with archaic runes. You may be able to find someone to help you decipher them. 
+Step 3:
+	- When talking with Treasure Hunter with the filled orb in the players inventory
+		○ (Treasure Hunter. Line 1) "Oh! That orb. I've seen that script somewhere before."
+		○ If the merchant is NOT housed:
+			§ (R:Treasure Hunter. Line 2) "If I had the proper facilities I could search my archives for it."
+		○ If the merchant IS housed:
+			§ (Treasure Hunter. Line 2) "Ahh, here it is. An old parchment with the same script. It was donated to me by a trainer exploring in the oceans to the for North East."
+		○ If the player does NOT have a pokemon with dive in their party:
+			§ (R:Treasure Hunter. Line 3) "At the moment I don't think you could enter the temple. You'd need a Pokemon that could help you enter."
+		○ If the player does have a pokemon with dive in their party:
+			§ (Treasure Hunter. Line 3) Wonderful, your <pokemon_in_party_w/dive> can help you enter the temple!"
+(Treasure Hunter. Line 4) "Here, take this map to the temple near where the parchment was found, you may be able to find a way to decipher them. I'll send my assistant to the temple to meet you there"
+		○ If the player does NOT have a pokemon with Teleport in their party:
+			§ (R:Treasure Hunter. Line 5) "It's quite the journey, maybe a Pokemon could help you get there faster."
+		○ If the player does have a pokemon with teleport in their party:
+			§ (R:Treasure Hunter. Line 5) "It's quite the journey, lucky for you your <pokemon_with_teleport> can teleport you right there!"
+(To player. Text should be clickable and will teleport the player to cords configurable in a datapack) "Teleport to temple?"
+	- When talking with the Treasure Hunter version at the temple:
+		○ (Treasure Hunter's assistant, Line 1) "You made it! Long trek eh?"
+(Treasure Hunter's assistant, Line 2) "That temple is messy business, you may want to set your spawn somewhere in case you end up sleeping with the fishes."
+		○ If the player does NOT have a pokemon with dive in their party:
+			§ (R:Treasure Hunter's assistant, Line 3) "Bold of you to brave the temple without the help of your pokemon. To each their own, best of luck!"
+		○ If the player does have a pokemon with dive in their party:
+			§ (R:Treasure Hunter's assistant, Line 3) "It looks like you're all set to face the temple! Your <pokemon_with_dive> will be helping you out."
+(Ding sound and 30 min of water breathing given. To player) "Return to the Treasure Hunter near the temple to refresh this effect"
+	- When talking with the treasure hunter version at the temple with the Tablet in the players inventory:
+		○ (Treasure Hunter's assistant, Line 4) "You actually did it! I thought I'd never see you again."
+(R:Treasure Hunter, Line 5) "Now that our celebrations are over, it's time for you to return home. Bring this tablet to the Treasure Hunter in his studies."
+		○ If the player has a pokemon with teleport:
+			§ (R:Treasure Hunter's assistant, Line 6) "Lovely, you brought your <pokemon_with_teleport> with you. They'll help you get home in a jiffy!"
+(To player. Text should be clickable and will teleport the player to cords configurable in a datapack) "Teleport to Treasure Hunters Studies?"
+
+Step 4:
+	- When talking to the treasure hunter back at his studies with the tablet:
+		○ (Treasure Hunter, Line 1) "Welcome back! Now let's take a look at that tablet. Please show it to me"
+		○ When the player is holding the tablet in their hand:
+			§ (Treasure Hunter, Line 2) "Hmmmm, I can't quite make out the figures. Try to find a way to brighten up the text."
+		○ When the player is holding the glowing tablet in their hand:
+(Treasure Hunter, Line 3) "That's so much better! I see, this is the translation cipher for the archaic script, it matches up perfectly with my parchment."
+(Treasure Hunter, Line 4) "Here, take the old parchment, it may help you figure out the secrets of your orb."
+(R:Treasure Hunter, Line 5) "I've done all I can to help you, the rest is up to you <3."
+

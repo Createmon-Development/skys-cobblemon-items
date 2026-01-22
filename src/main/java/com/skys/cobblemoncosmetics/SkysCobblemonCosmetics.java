@@ -1,5 +1,8 @@
 package com.skys.cobblemoncosmetics;
 
+import com.skys.cobblemoncosmetics.blocks.ModBlocks;
+import com.skys.cobblemoncosmetics.hunt.BattleFaintHandler;
+import com.skys.cobblemoncosmetics.hunt.HuntDataComponents;
 import com.skys.cobblemoncosmetics.items.ModItems;
 import com.skys.cobblemoncosmetics.loot.ModLootModifiers;
 import net.neoforged.api.distmarker.Dist;
@@ -21,6 +24,12 @@ public class SkysCobblemonCosmetics {
         // Register items
         ModItems.register(modEventBus);
 
+        // Register blocks
+        ModBlocks.register(modEventBus);
+
+        // Register hunt data components
+        HuntDataComponents.register(modEventBus);
+
         // TEST - Client setup for renderer registration
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(this::clientSetup);
@@ -28,6 +37,9 @@ public class SkysCobblemonCosmetics {
 
         // Register loot modifiers
         ModLootModifiers.register(modEventBus);
+
+        // Register battle faint handler for Crystal Ascendancy hunt
+        BattleFaintHandler.register();
 
         LOGGER.info("Sky's Cobblemon Items initialized successfully");
     }

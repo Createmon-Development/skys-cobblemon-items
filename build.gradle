@@ -54,6 +54,7 @@ dependencies {
     compileOnly "io.wispforest:accessories-neoforge:1.1.0-beta.52+1.21.1" // Accessories API
     compileOnly "maven.modrinth:cobblemon-mega-showdown:1.5+1.7.1+1.21.1" // MegaShowdown
     compileOnly "com.cobblemon:neoforge:1.7.1+1.21.1" // Cobblemon
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.9.22" // Kotlin stdlib for Cobblemon events
 }
 
 tasks.withType(JavaCompile).configureEach {
