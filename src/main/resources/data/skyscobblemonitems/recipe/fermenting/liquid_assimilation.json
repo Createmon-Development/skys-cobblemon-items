@@ -1,0 +1,28 @@
+{
+  "type": "brewinandchewin:fermenting",
+  "base_fluid": {
+    "amount": 1000,
+    "ingredient": {
+      "fluid": "createdieselgenerators:black_cement"
+    },
+    "unit": "millibuckets"
+  },
+  "experience": 1.0,
+  "fermenting_time": 9600,
+  "ingredients": [
+    {
+      "item": "minecraft:black_dye"
+    },
+    {
+      "item": "minecraft:slime_ball"
+    },
+    [],
+    []
+  ],
+  "result": {
+    "amount": 1000,
+    "id": "skyscobblemonitems:liquid_assimilation"
+  },
+  "temperature": 4,
+  "unit": "millibuckets"
+}

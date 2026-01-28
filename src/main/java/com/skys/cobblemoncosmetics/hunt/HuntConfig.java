@@ -1,7 +1,7 @@
 package com.skys.cobblemoncosmetics.hunt;
 
 /**
- * Configuration constants for the Crystal Ascendancy hunt
+ * Configuration constants for the Cobalt Ascendancy hunt
  */
 public class HuntConfig {
     // Gameplay balance
@@ -86,3 +86,4 @@ public class HuntConfig {
     public static final String DESC_TABLET_FADED = "Ancient runes cover the surface, but they are too faded to read.";
     public static final String DESC_TABLET_GLOWING = "The runes glow with an ethereal light, revealing their secrets.";
 }
+

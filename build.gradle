@@ -50,6 +50,9 @@ runs {
 dependencies {
     implementation "net.neoforged:neoforge:21.1.72"
 
+    // Mixin annotation processor for compile-time mixin processing
+    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+
     // TEST DEPENDENCIES - Remove these when done testing
     compileOnly "io.wispforest:accessories-neoforge:1.1.0-beta.52+1.21.1" // Accessories API
     compileOnly "maven.modrinth:cobblemon-mega-showdown:1.5+1.7.1+1.21.1" // MegaShowdown

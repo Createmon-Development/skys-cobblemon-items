@@ -75,7 +75,7 @@ public class ModItems {
     public static final DeferredItem<Item> EVENT_TICKET_GREEN = ITEMS.register("event_ticket_green",
         () -> new Item(new Item.Properties()));
 
-    // Crystal Ascendancy Hunt items
+    // Cobalt Ascendancy Hunt items
     public static final DeferredItem<Item> MYSTERIOUS_ORB = ITEMS.register("mysterious_orb",
         () -> new MysteriousOrbItem(new Item.Properties().stacksTo(1)));
 
@@ -89,6 +89,32 @@ public class ModItems {
     // NOTE: This creates a vanilla filled_map with custom decorations when given to player
     public static final DeferredItem<Item> TEMPLE_TREASURE_MAP = ITEMS.register("temple_treasure_map",
         () -> new TempleTreasureMapItem(new Item.Properties().stacksTo(1)));
+
+    // Liquid Assimilation Potion - Brewed in a Keg from Brewin' n Chewin'
+    // Made with black concrete liquid, black dye, and slime ball
+    public static final DeferredItem<Item> LIQUID_ASSIMILATION_POTION = ITEMS.register("liquid_assimilation_potion",
+        () -> new LiquidAssimilationPotionItem(new Item.Properties().stacksTo(1), false, 0));
+
+    // Lingering variant - throwable, made by adding dragon's breath to the base potion
+    // Default duration: 45 seconds
+    public static final DeferredItem<Item> LINGERING_LIQUID_ASSIMILATION_POTION = ITEMS.register("lingering_liquid_assimilation_potion",
+        () -> new LiquidAssimilationPotionItem(new Item.Properties().stacksTo(1), true, 45));
+
+    // Extended lingering variant - made by adding redstone to the lingering potion
+    // Extended duration: 2 minutes (120 seconds)
+    public static final DeferredItem<Item> LINGERING_LIQUID_ASSIMILATION_POTION_EXTENDED = ITEMS.register("lingering_liquid_assimilation_potion_extended",
+        () -> new LiquidAssimilationPotionItem(new Item.Properties().stacksTo(1), true, 120));
+
+    // Creeping variant - made by adding vine to the lingering potion
+    // Can be renamed in anvil to target a specific player (case insensitive)
+    // Default duration: 45 seconds
+    public static final DeferredItem<Item> CREEPING_LIQUID_ASSIMILATION_POTION = ITEMS.register("creeping_liquid_assimilation_potion",
+        () -> new CreepingAssimilationPotionItem(new Item.Properties().stacksTo(1), 45));
+
+    // Extended creeping variant - made by adding redstone to the creeping potion
+    // Extended duration: 2 minutes (120 seconds)
+    public static final DeferredItem<Item> CREEPING_LIQUID_ASSIMILATION_POTION_EXTENDED = ITEMS.register("creeping_liquid_assimilation_potion_extended",
+        () -> new CreepingAssimilationPotionItem(new Item.Properties().stacksTo(1), 120));
 
     // Creative tab for the mod items
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> COBBLEMON_COSMETICS_TAB = CREATIVE_MODE_TABS.register("cobblemon_cosmetics_tab", () -> CreativeModeTab.builder()
@@ -115,6 +141,11 @@ public class ModItems {
             output.accept(RUNIC_CIPHER_TABLET.get());
             output.accept(MYSTERIOUS_PARCHMENT.get());
             output.accept(TEMPLE_TREASURE_MAP.get());
+            output.accept(LIQUID_ASSIMILATION_POTION.get());
+            output.accept(LINGERING_LIQUID_ASSIMILATION_POTION.get());
+            output.accept(LINGERING_LIQUID_ASSIMILATION_POTION_EXTENDED.get());
+            output.accept(CREEPING_LIQUID_ASSIMILATION_POTION.get());
+            output.accept(CREEPING_LIQUID_ASSIMILATION_POTION_EXTENDED.get());
             // Block items
             output.accept(ModBlocks.RUNIC_ALTAR_ITEM.get());
         }).build());

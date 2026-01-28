@@ -9,11 +9,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
+import net.minecraft.client.Minecraft;
+
 import java.util.List;
 import java.util.Random;
 
 /**
- * The Mysterious Orb - main quest item for the Crystal Ascendancy hunt.
+ * The Mysterious Orb - main quest item for the Cobalt Ascendancy hunt.
  * Changes appearance based on how many runes have been revealed through battle.
  * Coordinate digits are revealed through puzzles and displayed with color coding.
  */
@@ -30,10 +32,15 @@ public class MysteriousOrbItem extends Item {
     private static final char Z_PLACEHOLDER = 'ᛉ'; // z
 
     // The actual rune sequence for "Awaken me" (always shown after orb is filled)
-    private static final String AWAKEN_ME_RUNES = "ᚨᚹᚨᚴᛖᚾᛗᛖ";
+    private static final String AWAKEN_ME_RUNES = "ᚨᚹᚨᚴᛖᚾ ᛗᛖ";
 
     // Runic digits: 0=ᛜ 1=ᛝ 2=ᛮ 3=ᛯ 4=ᛰ 5=ᚦ 6=ᚧ 7=ᚩ 8=ᚪ 9=ᚫ
     private static final char[] RUNIC_DIGITS = {'ᛜ', 'ᛝ', 'ᛮ', 'ᛯ', 'ᛰ', 'ᚦ', 'ᚧ', 'ᚩ', 'ᚪ', 'ᚫ'};
+
+    // Moon phase to X digit position mapping
+    // Each moon phase (0-7) reveals a different X digit position
+    // Phase 0=3rd, 1=2nd, 2=4th, 3=1st, 4=2nd, 5=1st, 6=4th, 7=3rd (positions are 0-indexed)
+    private static final int[] MOON_PHASE_TO_X_POSITION = {2, 1, 3, 0, 1, 0, 3, 2};
 
     public MysteriousOrbItem(Properties properties) {
         super(properties);
@@ -79,7 +86,20 @@ public class MysteriousOrbItem extends Item {
         int revealedRunes = getRevealedRunes(stack);
         int proximity = getProximity(stack);
 
-        // Add description based on state
+        // Check if orb is completed (has edition) - show simplified trophy text
+        Integer edition = getEdition(stack);
+        if (edition != null && edition > 0) {
+            // Completed orb - show only trophy description and edition
+            tooltipComponents.add(
+                Component.literal("A trophy to those who have calmed the writhing waves.")
+                    .withStyle(ChatFormatting.AQUA));
+            tooltipComponents.add(Component.empty());
+            tooltipComponents.add(Component.literal("Edition: #" + edition).withStyle(ChatFormatting.DARK_GRAY));
+            super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+            return;
+        }
+
+        // Add description based on state (for non-completed orbs)
         switch (state) {
             case EMPTY -> tooltipComponents.add(
                 Component.literal(HuntConfig.DESC_EMPTY).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
@@ -88,12 +108,15 @@ public class MysteriousOrbItem extends Item {
                     Component.literal(HuntConfig.DESC_FILLING).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
                 tooltipComponents.add(Component.empty());
                 tooltipComponents.add(createRuneDisplay(stack, revealedRunes, proximity));
+                // No coordinate line yet - orb not filled
             }
             case FINAL -> {
                 tooltipComponents.add(
                     Component.literal(HuntConfig.DESC_FILLED).withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
                 tooltipComponents.add(Component.empty());
                 tooltipComponents.add(createRuneDisplay(stack, revealedRunes, proximity));
+                // Show the shifting coordinate line below the static template
+                tooltipComponents.add(createCoordinateDisplay(stack, proximity));
             }
         }
 
@@ -112,14 +135,83 @@ public class MysteriousOrbItem extends Item {
     }
 
     /**
-     * Creates the rune display with revealed and scrambled characters.
-     * Coordinates are colored based on their discovery state:
-     * - Unrevealed: Light purple (scrambling)
-     * - Close (star puzzle): Yellow with nearby digit
-     * - Found (star puzzle): Green with correct digit
-     * - Origin proximity: Red (far) -> Orange (medium) -> Yellow (close) -> Green (exact)
+     * Creates the decoded message template line: "xxxx yy zzzz - Awaken me"
+     * - EMPTY: Everything scrambles
+     * - STAGE_1/HALF (filling): xxxx yy zzzz scrambles, "Awaken me" is stable
+     * - FINAL (filled): xxxx yy zzzz becomes static placeholder runes, "Awaken me" stable
      */
     private Component createRuneDisplay(ItemStack stack, int revealedCount, int proximity) {
+        MutableComponent display = Component.empty();
+        OrbState state = getOrbState(stack);
+        Random rand = new Random(System.currentTimeMillis() / 150); // Shift every 150ms
+
+        if (state == OrbState.FINAL) {
+            // FINAL state: Show STATIC placeholder runes for coordinates
+            // X placeholder (4 chars) - static
+            for (int i = 0; i < 4; i++) {
+                display.append(Component.literal(String.valueOf(X_PLACEHOLDER)).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
+            // Y placeholder (2 chars) - static
+            for (int i = 0; i < 2; i++) {
+                display.append(Component.literal(String.valueOf(Y_PLACEHOLDER)).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
+            // Z placeholder (4 chars) - static
+            for (int i = 0; i < 4; i++) {
+                display.append(Component.literal(String.valueOf(Z_PLACEHOLDER)).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            display.append(Component.literal(" - ").withStyle(ChatFormatting.LIGHT_PURPLE));
+            // "Awaken me" is stable
+            display.append(Component.literal(AWAKEN_ME_RUNES).withStyle(ChatFormatting.LIGHT_PURPLE));
+        } else if (revealedCount > 0) {
+            // STAGE_1/HALF: Coordinates still scramble, but "Awaken me" is stable
+            // X placeholder (4 chars) - scrambling
+            for (int i = 0; i < 4; i++) {
+                char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
+            // Y placeholder (2 chars) - scrambling
+            for (int i = 0; i < 2; i++) {
+                char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
+            // Z placeholder (4 chars) - scrambling
+            for (int i = 0; i < 4; i++) {
+                char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            display.append(Component.literal(" - ").withStyle(ChatFormatting.LIGHT_PURPLE));
+            // "Awaken me" is now stable/revealed
+            display.append(Component.literal(AWAKEN_ME_RUNES).withStyle(ChatFormatting.LIGHT_PURPLE));
+        } else {
+            // EMPTY: Everything scrambles including "Awaken me"
+            // Format: "xxxx yy zzzz - awaken me"
+            int totalLength = 4 + 1 + 2 + 1 + 4 + 3 + AWAKEN_ME_RUNES.length();
+            StringBuilder scrambled = new StringBuilder();
+            for (int i = 0; i < totalLength; i++) {
+                // Keep spaces and dash in their positions
+                if (i == 4 || i == 7 || i == 12 || i == 14 || i == 21) {
+                    scrambled.append(' ');
+                } else if (i == 13) {
+                    scrambled.append('-');
+                } else {
+                    scrambled.append(SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)]);
+                }
+            }
+            display.append(Component.literal(scrambled.toString()).withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
+
+        return display;
+    }
+
+    /**
+     * Creates the coordinate display line (xxxx yy zzzz).
+     * Only called when coordinates need to be shown.
+     */
+    private Component createCoordinateDisplay(ItemStack stack, int proximity) {
         MutableComponent display = Component.empty();
         Random rand = new Random(System.currentTimeMillis() / 150); // Shift every 150ms
 
@@ -127,9 +219,12 @@ public class MysteriousOrbItem extends Item {
         int yDigits = getYDigits(stack);
         int zDigits = getZDigits(stack);
 
+        // Get current moon phase for X digit visibility
+        int moonPhase = getCurrentMoonPhase();
+
         // Build X coordinate section (4 digits)
         for (int i = 0; i < 4; i++) {
-            display.append(createXDigitComponent(i, xDigits, rand));
+            display.append(createXDigitComponent(i, xDigits, moonPhase, rand));
         }
         display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
 
@@ -144,45 +239,50 @@ public class MysteriousOrbItem extends Item {
             display.append(createZDigitComponent(i, zDigits, proximity, rand));
         }
 
-        // Add " - " separator
-        display.append(Component.literal(" - ").withStyle(ChatFormatting.LIGHT_PURPLE));
-
-        // Add "Awaken me" in light purple (always shown when orb is filling/filled)
-        if (revealedCount > 0) {
-            display.append(Component.literal(AWAKEN_ME_RUNES).withStyle(ChatFormatting.LIGHT_PURPLE));
-        } else {
-            // Scrambled if no runes revealed yet
-            StringBuilder scrambled = new StringBuilder();
-            for (int i = 0; i < AWAKEN_ME_RUNES.length(); i++) {
-                scrambled.append(SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)]);
-            }
-            display.append(Component.literal(scrambled.toString()).withStyle(ChatFormatting.LIGHT_PURPLE));
-        }
-
         return display;
     }
 
     /**
-     * Creates a component for a single X digit based on discovery state
+     * Gets the current moon phase from the client world.
+     * Returns 0-7, or 0 if not available.
      */
-    private Component createXDigitComponent(int position, int revealedMask, Random rand) {
+    private int getCurrentMoonPhase() {
+        try {
+            if (Minecraft.getInstance().level != null) {
+                return Minecraft.getInstance().level.getMoonPhase();
+            }
+        } catch (Exception e) {
+            // Fallback if called from server side or level is unavailable
+        }
+        return 0;
+    }
+
+    /**
+     * Creates a component for a single X digit based on discovery state and moon phase.
+     * The moon phase determines which digit position is visible during that phase.
+     */
+    private Component createXDigitComponent(int position, int revealedMask, int moonPhase, Random rand) {
         boolean isRevealed = (revealedMask & (1 << position)) != 0;
         // Check for "close" state (bit in upper nibble)
         boolean isClose = (revealedMask & (1 << (position + 4))) != 0;
+
+        // Check if this position is the one shown for the current moon phase
+        int moonPhasePosition = MOON_PHASE_TO_X_POSITION[moonPhase];
+        boolean isCurrentMoonPosition = (position == moonPhasePosition);
 
         if (isRevealed) {
             // Fully revealed - green with correct digit
             char runicDigit = digitToRune(HuntConfig.X_DIGITS[position]);
             return Component.literal(String.valueOf(runicDigit)).withStyle(ChatFormatting.GREEN);
-        } else if (isClose) {
-            // Close - yellow with nearby digit (offset by 1-2)
+        } else if (isClose && isCurrentMoonPosition) {
+            // Close AND this is the moon phase's position - yellow with nearby digit (offset by 1-2)
             int actualDigit = Integer.parseInt(HuntConfig.X_DIGITS[position]);
             int offset = (rand.nextBoolean() ? 1 : -1) * (rand.nextInt(2) + 1);
             int nearbyDigit = Math.floorMod(actualDigit + offset, 10);
             char runicDigit = RUNIC_DIGITS[nearbyDigit];
             return Component.literal(String.valueOf(runicDigit)).withStyle(ChatFormatting.YELLOW);
         } else {
-            // Not revealed - scrambling placeholder
+            // Not revealed or not the current moon phase's position - scrambling placeholder
             char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
             return Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE);
         }
@@ -350,6 +450,14 @@ public class MysteriousOrbItem extends Item {
 
     public static void setFathomMark(ItemStack stack, String mark) {
         stack.set(HuntDataComponents.ORB_FATHOM_MARK.get(), mark);
+    }
+
+    public static Integer getEdition(ItemStack stack) {
+        return stack.get(HuntDataComponents.ORB_EDITION.get());
+    }
+
+    public static void setEdition(ItemStack stack, int edition) {
+        stack.set(HuntDataComponents.ORB_EDITION.get(), edition);
     }
 
     /**

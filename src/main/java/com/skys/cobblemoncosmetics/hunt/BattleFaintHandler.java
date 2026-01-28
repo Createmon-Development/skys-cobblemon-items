@@ -8,6 +8,7 @@ import com.cobblemon.mod.common.battles.pokemon.BattlePokemon;
 import com.skys.cobblemoncosmetics.SkysCobblemonCosmetics;
 import com.skys.cobblemoncosmetics.items.ModItems;
 import kotlin.Unit;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -15,7 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Handles battle faint events for the Crystal Ascendancy hunt.
+ * Handles battle faint events for the Cobalt Ascendancy hunt.
  * When an opponent's Pokemon faints while the player has the Mysterious Orb, increment its kill count.
  */
 public class BattleFaintHandler {
@@ -25,7 +26,7 @@ public class BattleFaintHandler {
             handleBattleFainted(event);
             return Unit.INSTANCE;
         });
-        SkysCobblemonCosmetics.LOGGER.info("Registered battle faint handler for Crystal Ascendancy hunt");
+        SkysCobblemonCosmetics.LOGGER.info("Registered battle faint handler for Cobalt Ascendancy hunt");
     }
 
     private static void handleBattleFainted(BattleFaintedEvent event) {
@@ -77,9 +78,6 @@ public class BattleFaintHandler {
             killCount = 0; // Reset kill counter
             revealedRunes++;
 
-            // Notify player of rune reveal
-            player.sendSystemMessage(Component.literal("§dA new rune materializes within the orb..."));
-
             // Play mystical sound
             player.level().playSound(null, player.blockPosition(),
                 SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 1.2F);
@@ -112,14 +110,14 @@ public class BattleFaintHandler {
 
     private static void notifyStateChange(ServerPlayer player, HuntDataComponents.OrbState newState) {
         String message = switch (newState) {
-            case STAGE_1 -> "§5The orb begins to stir with faint light...";
-            case HALF -> "§dThe orb pulses with growing power, halfway filled!";
-            case FINAL -> "§6The orb blazes with complete radiance! The runes have aligned!";
+            case STAGE_1 -> "The orb begins to stir with faint light...";
+            case HALF -> "The orb pulses with growing power, halfway filled!";
+            case FINAL -> "The orb blazes with complete radiance! The runes have aligned!";
             default -> "";
         };
 
         if (!message.isEmpty()) {
-            player.sendSystemMessage(Component.literal(message));
+            player.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
             // Extra fanfare for completion
             if (newState == HuntDataComponents.OrbState.FINAL) {

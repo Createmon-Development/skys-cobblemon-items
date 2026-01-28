@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "skyscobblemonitems:liquid_assimilation_potion" },
+    { "item": "minecraft:gunpowder" }
+  ],
+  "result": {
+    "id": "skyscobblemonitems:lingering_liquid_assimilation_potion",
+    "count": 1
+  }
+}

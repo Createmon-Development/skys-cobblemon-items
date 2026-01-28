@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.skys.cobblemoncosmetics.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "skyscobblemonitems.refmap.json",
+  "mixins": [
+    "PotionBrewingMixin",
+    "BrewingStandMenuMixin",
+    "CobblemonMarksMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "verbose": true
+}

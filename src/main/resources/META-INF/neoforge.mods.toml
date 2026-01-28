@@ -31,3 +31,6 @@ type = "required"
 versionRange = "[1.5,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[mixins]]
+config = "skyscobblemonitems.mixins.json"

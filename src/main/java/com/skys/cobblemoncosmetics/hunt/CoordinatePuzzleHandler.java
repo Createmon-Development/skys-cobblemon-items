@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Handles the coordinate puzzle mechanics for the Crystal Ascendancy hunt.
+ * Handles the coordinate puzzle mechanics for the Cobalt Ascendancy hunt.
  * - Star puzzle: Look at sky at night to find X coordinate digits (position feedback, not actual number)
  * - Origin puzzle: Travel to exactly (0,0,0) to reveal Z coordinate (with proximity feedback)
  */
@@ -148,8 +148,8 @@ public class CoordinatePuzzleHandler {
 
                 // Send success message
                 player.sendSystemMessage(Component.literal(
-                    "§a✦ The stars align! The inscription on the orb becomes a little more clear. ✦"
-                ));
+                    "The stars align! The inscription on the orb becomes a little more clear."
+                ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
                 // Play magical reveal sound
                 player.level().playSound(null, player.blockPosition(),
@@ -317,8 +317,8 @@ public class CoordinatePuzzleHandler {
 
         // Send triumphant message
         player.sendSystemMessage(Component.literal(
-            "§a✦ The orb swirls with satisfaction. The inscription becomes ever clearer. ✦"
-        ));
+            "The orb swirls with satisfaction. The inscription becomes ever clearer."
+        ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
         // Play level up sound for achievement feel
         player.level().playSound(null, player.blockPosition(),

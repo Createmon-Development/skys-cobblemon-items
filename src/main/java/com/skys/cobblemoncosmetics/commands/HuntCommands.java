@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Commands for managing the Crystal Ascendancy Hunt stages.
+ * Commands for managing the Cobalt Ascendancy Hunt stages.
  *
  * Usage:
  * /hunt stage <player> <stage>  - Set player to a specific hunt stage
@@ -26,8 +26,9 @@ import net.minecraft.world.item.ItemStack;
  * /hunt reset <player>          - Reset player's hunt progress
  *
  * Stages:
- * 1 - Not started
- * 2 - Has empty orb (start of hunt)
+ * 0 - Pre-hunt (reset all interactions, orb trade available)
+ * 1 - Not started (hasn't traded yet, orb trade available)
+ * 2 - Has empty orb (already traded, orb trade marked as used)
  * 3 - Has filled orb (runes revealed)
  * 4 - Has filled orb + faded tablet
  * 5 - Has filled orb + glowing tablet + parchment (complete)
@@ -40,7 +41,7 @@ public class HuntCommands {
             .requires(source -> source.hasPermission(2)) // OP level 2 required
             .then(Commands.literal("stage")
                 .then(Commands.argument("player", EntityArgument.player())
-                    .then(Commands.argument("stage", IntegerArgumentType.integer(1, 6))
+                    .then(Commands.argument("stage", IntegerArgumentType.integer(0, 6))
                         .executes(context -> {
                             ServerPlayer player = EntityArgument.getPlayer(context, "player");
                             int stage = IntegerArgumentType.getInteger(context, "stage");
@@ -67,6 +68,33 @@ public class HuntCommands {
 
         // Clear existing hunt items from inventory
         clearHuntItems(player);
+
+        // Clear dialogue progress so player can see dialogue again
+        manager.clearSeenDialogue(player.getUUID());
+
+        // Handle orb trade tracking based on stage
+        // Action ID and line ID used by cobblemon-custom-merchants for one-time orb trade
+        String orbTradeActionId = "trade_action:mysterious_orb_trade";
+        String orbTradeLineId = "used";
+        String orbBroadcastActionId = "trade_action:mysterious_orb_broadcast";
+        String orbBroadcastLineId = "broadcast";
+
+        if (stage <= 1) {
+            // Stage 0 or 1: Make orb trade available again (player hasn't traded yet)
+            manager.clearSpecificDialogue(player.getUUID(), orbTradeActionId, orbTradeLineId);
+            manager.clearSpecificDialogue(player.getUUID(), orbBroadcastActionId, orbBroadcastLineId);
+
+            // Also reset the permanent trade tracking in cobblemon-custom-merchants
+            // Use reflection to avoid hard dependency
+            resetMysteriousOrbTradeViaReflection(source.getLevel(), player.getUUID());
+
+            SkysCobblemonCosmetics.LOGGER.info("Cleared orb trade tracking for player {} (stage {})", player.getName().getString(), stage);
+        } else {
+            // Stage 2+: Mark orb trade as used (player already has orb)
+            manager.markDialogueSeen(player.getUUID(), orbTradeActionId, orbTradeLineId);
+            manager.markDialogueSeen(player.getUUID(), orbBroadcastActionId, orbBroadcastLineId);
+            SkysCobblemonCosmetics.LOGGER.info("Marked orb trade as used for player {} (stage {})", player.getName().getString(), stage);
+        }
 
         // Give items based on stage
         switch (stage) {
@@ -115,6 +143,9 @@ public class HuntCommands {
             }
             case 6 -> {
                 // Stage 6: Same as 5, but with X and Z coordinates solved (green)
+                // Also clears completion flag for testing purposes
+                manager.clearCompletion(player.getUUID());
+
                 ItemStack orb = new ItemStack(ModItems.MYSTERIOUS_ORB.get());
                 MysteriousOrbItem.setOrbState(orb, HuntDataComponents.OrbState.FINAL);
                 MysteriousOrbItem.setKillCount(orb, 0);
@@ -155,6 +186,7 @@ public class HuntCommands {
         int stage = manager.getPlayerStage(player.getUUID());
 
         String stageName = switch (stage) {
+            case 0 -> "Pre-Hunt (Reset)";
             case 1 -> "Not Started";
             case 2 -> "Has Empty Orb";
             case 3 -> "Orb Filled (Runes Revealed)";
@@ -222,6 +254,9 @@ public class HuntCommands {
         // Reset stage
         manager.clearPlayerStage(player.getUUID());
 
+        // Clear dialogue progress so player can see dialogue again
+        manager.clearSeenDialogue(player.getUUID());
+
         source.sendSuccess(() -> Component.literal("Reset hunt progress for ")
             .append(player.getDisplayName())
             .withStyle(ChatFormatting.GREEN), true);
@@ -243,6 +278,36 @@ public class HuntCommands {
                 stack.is(ModItems.MYSTERIOUS_PARCHMENT.get())) {
                 player.getInventory().setItem(i, ItemStack.EMPTY);
             }
+        }
+    }
+
+    /**
+     * Resets the mysterious orb permanent trade tracking via reflection.
+     * This calls DailyTradeResetManager.resetMysteriousOrbTrade() in cobblemon-custom-merchants
+     * if that mod is installed. Fails silently if the mod is not present.
+     */
+    private static void resetMysteriousOrbTradeViaReflection(net.minecraft.server.level.ServerLevel level, java.util.UUID playerUUID) {
+        try {
+            // Try to load the DailyTradeResetManager class from cobblemon-custom-merchants
+            Class<?> resetManagerClass = Class.forName("net.fit.cobblemonmerchants.merchant.rewards.DailyTradeResetManager");
+
+            // Get the static resetMysteriousOrbTrade method
+            java.lang.reflect.Method resetMethod = resetManagerClass.getMethod("resetMysteriousOrbTrade",
+                net.minecraft.server.level.ServerLevel.class, java.util.UUID.class);
+
+            // Call it
+            Boolean result = (Boolean) resetMethod.invoke(null, level, playerUUID);
+
+            if (result) {
+                SkysCobblemonCosmetics.LOGGER.info("Reset mysterious orb permanent trade for player {}", playerUUID);
+            } else {
+                SkysCobblemonCosmetics.LOGGER.debug("No mysterious orb trade record to reset for player {}", playerUUID);
+            }
+        } catch (ClassNotFoundException e) {
+            // cobblemon-custom-merchants is not installed, silently ignore
+            SkysCobblemonCosmetics.LOGGER.debug("cobblemon-custom-merchants not found, skipping orb trade reset");
+        } catch (Exception e) {
+            SkysCobblemonCosmetics.LOGGER.warn("Failed to reset mysterious orb trade via reflection: {}", e.getMessage());
         }
     }
 }

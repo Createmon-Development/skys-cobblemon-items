@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "skyscobblemonitems:lingering_liquid_assimilation_potion" },
+    { "item": "minecraft:vine" }
+  ],
+  "result": {
+    "id": "skyscobblemonitems:creeping_liquid_assimilation_potion",
+    "count": 1
+  }
+}

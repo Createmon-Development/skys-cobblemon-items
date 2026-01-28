@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Mysterious Parchment - A cryptic poem item for the Crystal Ascendancy hunt.
+ * Mysterious Parchment - A cryptic poem item for the Cobalt Ascendancy hunt.
  * Right-clicking opens it as a book with the runic prophecy.
  */
 public class MysteriousParchmentItem extends Item {
@@ -74,27 +74,27 @@ public class MysteriousParchmentItem extends Item {
         page1.append(encodeToRunes("hiding the path to its owners home."));
         pages.add(Component.literal(page1.toString()).withStyle(ChatFormatting.DARK_PURPLE));
 
-        // Page 2: Second stanza
+        // Page 2: Third stanza (sky/veil) - swapped with stanza 2
         StringBuilder page2 = new StringBuilder();
-        page2.append(encodeToRunes("A new homes fathom,")).append("\n");
-        page2.append(encodeToRunes("cast out from sea to stratum.")).append("\n");
-        page2.append(encodeToRunes("A hunters brag,")).append("\n");
-        page2.append(encodeToRunes("within a tag."));
+        page2.append(encodeToRunes("The sky a connecting veil,")).append("\n");
+        page2.append(encodeToRunes("stowing the parallel,")).append("\n");
+        page2.append(encodeToRunes("let sight confer a boon")).append("\n");
+        page2.append(encodeToRunes("from lights of many a moon."));
         pages.add(Component.literal(page2.toString()).withStyle(ChatFormatting.DARK_PURPLE));
 
-        // Page 3: Third stanza
+        // Page 3: Second stanza (new homes) - swapped with stanza 3
         StringBuilder page3 = new StringBuilder();
-        page3.append(encodeToRunes("The sky a connecting veil,")).append("\n");
-        page3.append(encodeToRunes("stowing the parallel,")).append("\n");
-        page3.append(encodeToRunes("let sight confer a boon")).append("\n");
-        page3.append(encodeToRunes("from lights of many a moon."));
+        page3.append(encodeToRunes("A new homes fathom,")).append("\n");
+        page3.append(encodeToRunes("cast out from sea to stratum.")).append("\n");
+        page3.append(encodeToRunes("A hunters brag,")).append("\n");
+        page3.append(encodeToRunes("within a tag."));
         pages.add(Component.literal(page3.toString()).withStyle(ChatFormatting.DARK_PURPLE));
 
         // Page 4: Fourth stanza
         StringBuilder page4 = new StringBuilder();
         page4.append(encodeToRunes("Where axis meet,")).append("\n");
         page4.append(encodeToRunes("its third secretes.")).append("\n");
-        page4.append(encodeToRunes("the world heart,")).append("\n");
+        page4.append(encodeToRunes("the worlds heart,")).append("\n");
         page4.append(encodeToRunes("the final mark."));
         pages.add(Component.literal(page4.toString()).withStyle(ChatFormatting.DARK_PURPLE));
 
@@ -146,19 +146,19 @@ public class MysteriousParchmentItem extends Item {
             encodeToRunes("will one day return from the waters foam,"),
             encodeToRunes("hiding the path to its owners home."),
             "",
-            encodeToRunes("A new homes fathom,"),
-            encodeToRunes("cast out from sea to stratum."),
-            encodeToRunes("A hunters brag,"),
-            encodeToRunes("within a tag."),
-            "",
             encodeToRunes("The sky a connecting veil,"),
             encodeToRunes("stowing the parallel,"),
             encodeToRunes("let sight confer a boon"),
             encodeToRunes("from lights of many a moon."),
             "",
+            encodeToRunes("A new homes fathom,"),
+            encodeToRunes("cast out from sea to stratum."),
+            encodeToRunes("A hunters brag,"),
+            encodeToRunes("within a tag."),
+            "",
             encodeToRunes("Where axis meet,"),
             encodeToRunes("its third secretes."),
-            encodeToRunes("the world heart,"),
+            encodeToRunes("the worlds heart,"),
             encodeToRunes("the final mark.")
         };
     }
@@ -173,19 +173,19 @@ public class MysteriousParchmentItem extends Item {
             "will one day return from the waters foam,",
             "hiding the path to its owners home.",
             "",
-            "A new homes fathom,",
-            "cast out from sea to stratum.",
-            "A hunters brag,",
-            "within a tag.",
-            "",
             "The sky a connecting veil,",
             "stowing the parallel,",
             "let sight confer a boon",
             "from lights of many a moon.",
             "",
+            "A new homes fathom,",
+            "cast out from sea to stratum.",
+            "A hunters brag,",
+            "within a tag.",
+            "",
             "Where axis meet,",
             "its third secretes.",
-            "the world heart,",
+            "the worlds heart,",
             "the final mark."
         };
     }

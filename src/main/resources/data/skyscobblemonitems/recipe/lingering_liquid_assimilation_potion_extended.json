@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "skyscobblemonitems:lingering_liquid_assimilation_potion" },
+    { "item": "minecraft:redstone" }
+  ],
+  "result": {
+    "id": "skyscobblemonitems:lingering_liquid_assimilation_potion_extended",
+    "count": 1
+  }
+}
