@@ -111,18 +111,18 @@ public class BattleFaintHandler {
     private static void notifyStateChange(ServerPlayer player, HuntDataComponents.OrbState newState) {
         String message = switch (newState) {
             case STAGE_1 -> "The orb begins to stir with faint light...";
-            case HALF -> "The orb pulses with growing power, halfway filled!";
-            case FINAL -> "The orb blazes with complete radiance! The runes have aligned!";
+            case HALF -> ""; // No message for halfway
+            case FINAL -> HuntConfig.DESC_FILLED;
             default -> "";
         };
 
         if (!message.isEmpty()) {
             player.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
-            // Extra fanfare for completion
+            // Extra fanfare for completion - level up sound
             if (newState == HuntDataComponents.OrbState.FINAL) {
                 player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
         }
     }

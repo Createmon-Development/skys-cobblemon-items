@@ -5,21 +5,24 @@ package com.skys.cobblemoncosmetics.hunt;
  */
 public class HuntConfig {
     // Gameplay balance
-    public static final int KILLS_PER_RUNE = 1;          // Pokemon defeats needed to reveal 1 rune
-    public static final int TOTAL_RUNES = 18;            // Total runes to unscramble (xxxx yy zzzz - Awaken me)
+    public static final int KILLS_PER_RUNE = 3;          // Pokemon defeats needed to reveal 1 rune
+    public static final int TOTAL_RUNES = 18;            // Total chars in "xxxx yy zzzz - Awaken Me" (excluding spaces/dash)
     public static final long FAILURE_COOLDOWN_MS = 5 * 60 * 60 * 1000; // 5 hours
 
-    // Rune thresholds for orb state changes (based on message structure)
-    // Left side: "xxxx yy zzzz" = 10 runes (coordinates)
-    // Right side: "Awaken me" = 8 runes (message)
-    public static final int RUNES_FOR_STAGE_1 = 1;       // After first rune revealed
-    public static final int RUNES_FOR_HALF = 10;         // Left side complete (coordinates revealed)
-    public static final int RUNES_FOR_FINAL = 18;        // All runes revealed (full message)
+    // Rune thresholds for orb state changes
+    // Line: "xxxx yy zzzz - Awaken Me" = 18 characters (4+2+4+8, excluding spaces/dash)
+    // At rune 1: whole line shifts, random chars stop shifting with each rune
+    // At rune 10: HALF state (half the chars stable)
+    // At rune 18: FINAL state (all chars stable, shows actual coordinates below)
+    public static final int RUNES_FOR_STAGE_1 = 1;       // After first rune - line starts showing
+    public static final int RUNES_FOR_HALF = 10;         // Half the characters stable
+    public static final int RUNES_FOR_FINAL = 18;        // All characters stable, show coordinates
 
     // Coordinate puzzle - Star puzzle (X coordinate)
-    public static final int STAR_BEEP_RANGE = 45;        // Degrees from correct direction for audio cue (increased from 30)
-    public static final int STAR_CLOSE_RANGE = 20;       // Degrees for "close" feedback (yellow) - more lenient
-    public static final int STAR_EXACT_RANGE = 10;       // Degrees for "exact" feedback (green) - more lenient
+    // Metal detector-style feedback: starts when looking in correct quadrant, intensifies as you get closer
+    public static final int STAR_QUADRANT_RANGE = 90;    // Degrees from correct direction to start hearing notes (full quadrant)
+    public static final int STAR_CLOSE_RANGE = 20;       // Degrees for "close" feedback (yellow, action bar text)
+    public static final int STAR_EXACT_RANGE = 10;       // Degrees for "exact" feedback (green) - reveals digit
 
     // Coordinate puzzle - Origin puzzle (Z coordinate)
     public static final int ORIGIN_HUM_RANGE = 100;      // Blocks from world origin for "soft" hum
@@ -79,8 +82,8 @@ public class HuntConfig {
 
     // Orb descriptions
     public static final String DESC_EMPTY = "The orb wishes to feel alive";
-    public static final String DESC_FILLING = "Symbols of light writhe inside the orb";
-    public static final String DESC_FILLED = "The symbols have aligned. Perhaps someone can read them...";
+    public static final String DESC_FILLING = "The orb wishes to feel alive"; // Same as empty during filling
+    public static final String DESC_FILLED = "The symbols calm, perhaps someone can help you make sense of them…";
 
     // Tablet descriptions
     public static final String DESC_TABLET_FADED = "Ancient runes cover the surface, but they are too faded to read.";

@@ -48,6 +48,8 @@ public class HuntCommands {
                             return setPlayerStage(context.getSource(), player, stage);
                         }))))
             .then(Commands.literal("progress")
+                .then(Commands.literal("summary")
+                    .executes(context -> showProgressSummary(context.getSource())))
                 .then(Commands.argument("player", EntityArgument.player())
                     .executes(context -> {
                         ServerPlayer player = EntityArgument.getPlayer(context, "player");
@@ -241,6 +243,69 @@ public class HuntCommands {
         source.sendSuccess(() -> Component.literal("  Parchment: ")
             .append(Component.literal(fHasParchment ? "Yes" : "No")
                 .withStyle(fHasParchment ? ChatFormatting.GREEN : ChatFormatting.RED)), false);
+
+        return 1;
+    }
+
+    private static int showProgressSummary(CommandSourceStack source) {
+        CrystalAscendancyManager manager = CrystalAscendancyManager.get(source.getServer());
+
+        source.sendSuccess(() -> Component.literal("=== Hunt Progress Summary ===")
+            .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
+
+        int playersFound = 0;
+
+        // Iterate through all online players
+        for (ServerPlayer player : source.getServer().getPlayerList().getPlayers()) {
+            int stage = manager.getPlayerStage(player.getUUID());
+
+            // Only show players at stage 2+ (has claimed the orb)
+            if (stage >= 2) {
+                playersFound++;
+
+                String stageName = switch (stage) {
+                    case 2 -> "Has Empty Orb";
+                    case 3 -> "Orb Filled";
+                    case 4 -> "Has Tablet (Faded)";
+                    case 5 -> "Complete (Has Parchment)";
+                    case 6 -> "Complete (X & Z Solved)";
+                    default -> "Stage " + stage;
+                };
+
+                // Get orb rune count from inventory if they have one
+                int orbRunes = 0;
+                for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                    ItemStack stack = player.getInventory().getItem(i);
+                    if (stack.is(ModItems.MYSTERIOUS_ORB.get())) {
+                        orbRunes = MysteriousOrbItem.getRevealedRunes(stack);
+                        break;
+                    }
+                }
+
+                final String fStageName = stageName;
+                final int fOrbRunes = orbRunes;
+                final int fStage = stage;
+
+                source.sendSuccess(() -> Component.literal("")
+                    .append(player.getDisplayName())
+                    .append(Component.literal(" - ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(fStageName).withStyle(
+                        fStage >= 5 ? ChatFormatting.GREEN :
+                        fStage >= 3 ? ChatFormatting.YELLOW :
+                        ChatFormatting.WHITE))
+                    .append(Component.literal(" (" + fOrbRunes + "/" + HuntConfig.TOTAL_RUNES + " runes)")
+                        .withStyle(ChatFormatting.DARK_GRAY)), false);
+            }
+        }
+
+        if (playersFound == 0) {
+            source.sendSuccess(() -> Component.literal("No online players are currently on the hunt (stage 2+).")
+                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+        } else {
+            final int fPlayersFound = playersFound;
+            source.sendSuccess(() -> Component.literal("Total: " + fPlayersFound + " player(s) on the hunt")
+                .withStyle(ChatFormatting.GOLD), false);
+        }
 
         return 1;
     }

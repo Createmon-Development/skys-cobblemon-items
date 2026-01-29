@@ -48,14 +48,14 @@ public class MysteriousOrbItem extends Item {
 
     @Override
     public Component getName(ItemStack stack) {
-        OrbState state = getOrbState(stack);
-
-        if (state == OrbState.EMPTY) {
-            // Glitchy/shifting name effect for unfilled orb
-            return createGlitchyName();
+        // Check if orb has edition (completed trophy) - use static name
+        Integer edition = getEdition(stack);
+        if (edition != null && edition > 0) {
+            return Component.translatable(this.getDescriptionId(stack));
         }
 
-        return Component.translatable(this.getDescriptionId(stack));
+        // Glitchy/shifting name effect for all non-completed orbs
+        return createGlitchyName();
     }
 
     /**
@@ -134,74 +134,98 @@ public class MysteriousOrbItem extends Item {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
+    // Fixed reveal order for the 18 character positions in "xxxx yy zzzz - Awaken Me"
+    // Positions: 0-3=x, 4-5=y, 6-9=z, 10-17=AwakenMe (spaces not counted)
+    // This creates a visually interesting pattern where chars stabilize across the whole line
+    private static final int[] REVEAL_ORDER = {
+        14, 3, 10, 7, 1, 16, 5, 12, 8, 0,  // First 10 (for HALF state)
+        17, 4, 13, 2, 15, 9, 11, 6          // Last 8 (for FINAL state)
+    };
+
     /**
      * Creates the decoded message template line: "xxxx yy zzzz - Awaken me"
-     * - EMPTY: Everything scrambles
-     * - STAGE_1/HALF (filling): xxxx yy zzzz scrambles, "Awaken me" is stable
-     * - FINAL (filled): xxxx yy zzzz becomes static placeholder runes, "Awaken me" stable
+     * - EMPTY (revealedCount=0): No display
+     * - STAGE_1/HALF (revealedCount 1-17): Line shows, random chars stop shifting
+     * - FINAL (revealedCount=18): All static, shows actual coordinates below
      */
     private Component createRuneDisplay(ItemStack stack, int revealedCount, int proximity) {
         MutableComponent display = Component.empty();
         OrbState state = getOrbState(stack);
         Random rand = new Random(System.currentTimeMillis() / 150); // Shift every 150ms
 
-        if (state == OrbState.FINAL) {
-            // FINAL state: Show STATIC placeholder runes for coordinates
-            // X placeholder (4 chars) - static
-            for (int i = 0; i < 4; i++) {
-                display.append(Component.literal(String.valueOf(X_PLACEHOLDER)).withStyle(ChatFormatting.LIGHT_PURPLE));
-            }
-            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
-            // Y placeholder (2 chars) - static
-            for (int i = 0; i < 2; i++) {
-                display.append(Component.literal(String.valueOf(Y_PLACEHOLDER)).withStyle(ChatFormatting.LIGHT_PURPLE));
-            }
-            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
-            // Z placeholder (4 chars) - static
-            for (int i = 0; i < 4; i++) {
-                display.append(Component.literal(String.valueOf(Z_PLACEHOLDER)).withStyle(ChatFormatting.LIGHT_PURPLE));
-            }
-            display.append(Component.literal(" - ").withStyle(ChatFormatting.LIGHT_PURPLE));
-            // "Awaken me" is stable
-            display.append(Component.literal(AWAKEN_ME_RUNES).withStyle(ChatFormatting.LIGHT_PURPLE));
-        } else if (revealedCount > 0) {
-            // STAGE_1/HALF: Coordinates still scramble, but "Awaken me" is stable
-            // X placeholder (4 chars) - scrambling
-            for (int i = 0; i < 4; i++) {
+        if (revealedCount == 0) {
+            // EMPTY state: No display
+            return display;
+        }
+
+        // Determine which positions are stable based on revealedCount
+        // revealedCount positions from REVEAL_ORDER are stable
+        boolean[] isStable = new boolean[18];
+        for (int i = 0; i < Math.min(revealedCount, 18); i++) {
+            isStable[REVEAL_ORDER[i]] = true;
+        }
+
+        // The template characters for each position
+        // Positions 0-3: X placeholders, 4-5: Y placeholders, 6-9: Z placeholders
+        // Positions 10-17: "AwakenMe" (8 letters, space handled separately)
+        char[] templateChars = {
+            X_PLACEHOLDER, X_PLACEHOLDER, X_PLACEHOLDER, X_PLACEHOLDER,  // 0-3: xxxx
+            Y_PLACEHOLDER, Y_PLACEHOLDER,                                  // 4-5: yy
+            Z_PLACEHOLDER, Z_PLACEHOLDER, Z_PLACEHOLDER, Z_PLACEHOLDER,  // 6-9: zzzz
+            'ᚨ', 'ᚹ', 'ᚨ', 'ᚴ', 'ᛖ', 'ᚾ', 'ᛗ', 'ᛖ'                        // 10-17: AwakenMe
+        };
+
+        // Build X section (positions 0-3)
+        for (int i = 0; i < 4; i++) {
+            if (isStable[i]) {
+                display.append(Component.literal(String.valueOf(templateChars[i])).withStyle(ChatFormatting.LIGHT_PURPLE));
+            } else {
                 char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
-                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE));
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.DARK_GRAY));
             }
-            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
-            // Y placeholder (2 chars) - scrambling
-            for (int i = 0; i < 2; i++) {
+        }
+        display.append(Component.literal(" ").withStyle(ChatFormatting.DARK_GRAY));
+
+        // Build Y section (positions 4-5)
+        for (int i = 4; i < 6; i++) {
+            if (isStable[i]) {
+                display.append(Component.literal(String.valueOf(templateChars[i])).withStyle(ChatFormatting.LIGHT_PURPLE));
+            } else {
                 char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
-                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE));
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.DARK_GRAY));
             }
-            display.append(Component.literal(" ").withStyle(ChatFormatting.LIGHT_PURPLE));
-            // Z placeholder (4 chars) - scrambling
-            for (int i = 0; i < 4; i++) {
+        }
+        display.append(Component.literal(" ").withStyle(ChatFormatting.DARK_GRAY));
+
+        // Build Z section (positions 6-9)
+        for (int i = 6; i < 10; i++) {
+            if (isStable[i]) {
+                display.append(Component.literal(String.valueOf(templateChars[i])).withStyle(ChatFormatting.LIGHT_PURPLE));
+            } else {
                 char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
-                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE));
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.DARK_GRAY));
             }
-            display.append(Component.literal(" - ").withStyle(ChatFormatting.LIGHT_PURPLE));
-            // "Awaken me" is now stable/revealed
-            display.append(Component.literal(AWAKEN_ME_RUNES).withStyle(ChatFormatting.LIGHT_PURPLE));
-        } else {
-            // EMPTY: Everything scrambles including "Awaken me"
-            // Format: "xxxx yy zzzz - awaken me"
-            int totalLength = 4 + 1 + 2 + 1 + 4 + 3 + AWAKEN_ME_RUNES.length();
-            StringBuilder scrambled = new StringBuilder();
-            for (int i = 0; i < totalLength; i++) {
-                // Keep spaces and dash in their positions
-                if (i == 4 || i == 7 || i == 12 || i == 14 || i == 21) {
-                    scrambled.append(' ');
-                } else if (i == 13) {
-                    scrambled.append('-');
-                } else {
-                    scrambled.append(SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)]);
-                }
+        }
+        display.append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY));
+
+        // Build "Awaken Me" section (positions 10-17, with space between Awaken and Me)
+        // Awaken = positions 10-15, Me = positions 16-17
+        for (int i = 10; i < 16; i++) {
+            if (isStable[i]) {
+                display.append(Component.literal(String.valueOf(templateChars[i])).withStyle(ChatFormatting.LIGHT_PURPLE));
+            } else {
+                char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.DARK_GRAY));
             }
-            display.append(Component.literal(scrambled.toString()).withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
+        display.append(Component.literal(" ").withStyle(ChatFormatting.DARK_GRAY)); // Space between Awaken and Me
+        for (int i = 16; i < 18; i++) {
+            if (isStable[i]) {
+                display.append(Component.literal(String.valueOf(templateChars[i])).withStyle(ChatFormatting.LIGHT_PURPLE));
+            } else {
+                char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
+                display.append(Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.DARK_GRAY));
+            }
         }
 
         return display;
@@ -282,9 +306,8 @@ public class MysteriousOrbItem extends Item {
             char runicDigit = RUNIC_DIGITS[nearbyDigit];
             return Component.literal(String.valueOf(runicDigit)).withStyle(ChatFormatting.YELLOW);
         } else {
-            // Not revealed or not the current moon phase's position - scrambling placeholder
-            char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
-            return Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE);
+            // Not revealed - dark gray underscore placeholder
+            return Component.literal("_").withStyle(ChatFormatting.DARK_GRAY);
         }
     }
 
@@ -299,9 +322,8 @@ public class MysteriousOrbItem extends Item {
             char runicDigit = digitToRune(HuntConfig.Y_DIGITS[position]);
             return Component.literal(String.valueOf(runicDigit)).withStyle(ChatFormatting.GREEN);
         } else {
-            // Not revealed - scrambling placeholder
-            char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
-            return Component.literal(String.valueOf(scrambled)).withStyle(ChatFormatting.LIGHT_PURPLE);
+            // Not revealed - dark gray underscore placeholder
+            return Component.literal("_").withStyle(ChatFormatting.DARK_GRAY);
         }
     }
 
@@ -316,16 +338,15 @@ public class MysteriousOrbItem extends Item {
             char runicDigit = digitToRune(HuntConfig.Z_DIGITS[position]);
             return Component.literal(String.valueOf(runicDigit)).withStyle(ChatFormatting.GREEN);
         } else {
-            // Color based on proximity to origin
+            // Color based on proximity to origin (underscore placeholder)
             ChatFormatting color = switch (proximity) {
                 case 1 -> ChatFormatting.RED;      // Far (100 blocks)
                 case 2 -> ChatFormatting.GOLD;     // Medium (50 blocks)
                 case 3 -> ChatFormatting.YELLOW;   // Close (25 blocks)
-                default -> ChatFormatting.LIGHT_PURPLE; // Not near origin
+                default -> ChatFormatting.DARK_GRAY; // Not near origin
             };
 
-            char scrambled = SCRAMBLE_CHARS[rand.nextInt(SCRAMBLE_CHARS.length)];
-            return Component.literal(String.valueOf(scrambled)).withStyle(color);
+            return Component.literal("_").withStyle(color);
         }
     }
 
