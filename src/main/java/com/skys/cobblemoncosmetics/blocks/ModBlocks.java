@@ -19,9 +19,10 @@ public class ModBlocks {
     public static final DeferredRegister.Items BLOCK_ITEMS = DeferredRegister.createItems(SkysCobblemonCosmetics.MOD_ID);
 
     // Runic Altar - Gives players the faded tablet when interacted with
+    // Indestructible like bedrock (-1 hardness = unbreakable, high blast resistance)
     public static final DeferredBlock<Block> RUNIC_ALTAR = BLOCKS.register("runic_altar",
         () -> new RunicAltarBlock(BlockBehaviour.Properties.of()
-            .strength(2.0f, 6.0f)
+            .strength(-1.0f, 3600000.0f)
             .sound(SoundType.STONE)
             .lightLevel(state -> 7)
             .noOcclusion()));
