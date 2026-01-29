@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Commands for managing the Crystal Ascendancy Hunt stages.
+ * Commands for managing the Cobalt Ascendancy Hunt stages.
  *
  * Usage:
  * /hunt stage <player> <stage>  - Set player to a specific hunt stage
@@ -26,8 +26,9 @@ import net.minecraft.world.item.ItemStack;
  * /hunt reset <player>          - Reset player's hunt progress
  *
  * Stages:
- * 1 - Not started
- * 2 - Has empty orb (start of hunt)
+ * 0 - Pre-hunt (reset all interactions, orb trade available)
+ * 1 - Not started (hasn't traded yet, orb trade available)
+ * 2 - Has empty orb (already traded, orb trade marked as used)
  * 3 - Has filled orb (runes revealed)
  * 4 - Has filled orb + faded tablet
  * 5 - Has filled orb + glowing tablet + parchment (complete)
@@ -40,13 +41,15 @@ public class HuntCommands {
             .requires(source -> source.hasPermission(2)) // OP level 2 required
             .then(Commands.literal("stage")
                 .then(Commands.argument("player", EntityArgument.player())
-                    .then(Commands.argument("stage", IntegerArgumentType.integer(1, 6))
+                    .then(Commands.argument("stage", IntegerArgumentType.integer(0, 6))
                         .executes(context -> {
                             ServerPlayer player = EntityArgument.getPlayer(context, "player");
                             int stage = IntegerArgumentType.getInteger(context, "stage");
                             return setPlayerStage(context.getSource(), player, stage);
                         }))))
             .then(Commands.literal("progress")
+                .then(Commands.literal("summary")
+                    .executes(context -> showProgressSummary(context.getSource())))
                 .then(Commands.argument("player", EntityArgument.player())
                     .executes(context -> {
                         ServerPlayer player = EntityArgument.getPlayer(context, "player");
@@ -67,6 +70,33 @@ public class HuntCommands {
 
         // Clear existing hunt items from inventory
         clearHuntItems(player);
+
+        // Clear dialogue progress so player can see dialogue again
+        manager.clearSeenDialogue(player.getUUID());
+
+        // Handle orb trade tracking based on stage
+        // Action ID and line ID used by cobblemon-custom-merchants for one-time orb trade
+        String orbTradeActionId = "trade_action:mysterious_orb_trade";
+        String orbTradeLineId = "used";
+        String orbBroadcastActionId = "trade_action:mysterious_orb_broadcast";
+        String orbBroadcastLineId = "broadcast";
+
+        if (stage <= 1) {
+            // Stage 0 or 1: Make orb trade available again (player hasn't traded yet)
+            manager.clearSpecificDialogue(player.getUUID(), orbTradeActionId, orbTradeLineId);
+            manager.clearSpecificDialogue(player.getUUID(), orbBroadcastActionId, orbBroadcastLineId);
+
+            // Also reset the permanent trade tracking in cobblemon-custom-merchants
+            // Use reflection to avoid hard dependency
+            resetMysteriousOrbTradeViaReflection(source.getLevel(), player.getUUID());
+
+            SkysCobblemonCosmetics.LOGGER.info("Cleared orb trade tracking for player {} (stage {})", player.getName().getString(), stage);
+        } else {
+            // Stage 2+: Mark orb trade as used (player already has orb)
+            manager.markDialogueSeen(player.getUUID(), orbTradeActionId, orbTradeLineId);
+            manager.markDialogueSeen(player.getUUID(), orbBroadcastActionId, orbBroadcastLineId);
+            SkysCobblemonCosmetics.LOGGER.info("Marked orb trade as used for player {} (stage {})", player.getName().getString(), stage);
+        }
 
         // Give items based on stage
         switch (stage) {
@@ -115,6 +145,9 @@ public class HuntCommands {
             }
             case 6 -> {
                 // Stage 6: Same as 5, but with X and Z coordinates solved (green)
+                // Also clears completion flag for testing purposes
+                manager.clearCompletion(player.getUUID());
+
                 ItemStack orb = new ItemStack(ModItems.MYSTERIOUS_ORB.get());
                 MysteriousOrbItem.setOrbState(orb, HuntDataComponents.OrbState.FINAL);
                 MysteriousOrbItem.setKillCount(orb, 0);
@@ -155,6 +188,7 @@ public class HuntCommands {
         int stage = manager.getPlayerStage(player.getUUID());
 
         String stageName = switch (stage) {
+            case 0 -> "Pre-Hunt (Reset)";
             case 1 -> "Not Started";
             case 2 -> "Has Empty Orb";
             case 3 -> "Orb Filled (Runes Revealed)";
@@ -213,6 +247,69 @@ public class HuntCommands {
         return 1;
     }
 
+    private static int showProgressSummary(CommandSourceStack source) {
+        CrystalAscendancyManager manager = CrystalAscendancyManager.get(source.getServer());
+
+        source.sendSuccess(() -> Component.literal("=== Hunt Progress Summary ===")
+            .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
+
+        int playersFound = 0;
+
+        // Iterate through all online players
+        for (ServerPlayer player : source.getServer().getPlayerList().getPlayers()) {
+            int stage = manager.getPlayerStage(player.getUUID());
+
+            // Only show players at stage 2+ (has claimed the orb)
+            if (stage >= 2) {
+                playersFound++;
+
+                String stageName = switch (stage) {
+                    case 2 -> "Has Empty Orb";
+                    case 3 -> "Orb Filled";
+                    case 4 -> "Has Tablet (Faded)";
+                    case 5 -> "Complete (Has Parchment)";
+                    case 6 -> "Complete (X & Z Solved)";
+                    default -> "Stage " + stage;
+                };
+
+                // Get orb rune count from inventory if they have one
+                int orbRunes = 0;
+                for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                    ItemStack stack = player.getInventory().getItem(i);
+                    if (stack.is(ModItems.MYSTERIOUS_ORB.get())) {
+                        orbRunes = MysteriousOrbItem.getRevealedRunes(stack);
+                        break;
+                    }
+                }
+
+                final String fStageName = stageName;
+                final int fOrbRunes = orbRunes;
+                final int fStage = stage;
+
+                source.sendSuccess(() -> Component.literal("")
+                    .append(player.getDisplayName())
+                    .append(Component.literal(" - ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(fStageName).withStyle(
+                        fStage >= 5 ? ChatFormatting.GREEN :
+                        fStage >= 3 ? ChatFormatting.YELLOW :
+                        ChatFormatting.WHITE))
+                    .append(Component.literal(" (" + fOrbRunes + "/" + HuntConfig.TOTAL_RUNES + " runes)")
+                        .withStyle(ChatFormatting.DARK_GRAY)), false);
+            }
+        }
+
+        if (playersFound == 0) {
+            source.sendSuccess(() -> Component.literal("No online players are currently on the hunt (stage 2+).")
+                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+        } else {
+            final int fPlayersFound = playersFound;
+            source.sendSuccess(() -> Component.literal("Total: " + fPlayersFound + " player(s) on the hunt")
+                .withStyle(ChatFormatting.GOLD), false);
+        }
+
+        return 1;
+    }
+
     private static int resetProgress(CommandSourceStack source, ServerPlayer player) {
         CrystalAscendancyManager manager = CrystalAscendancyManager.get(source.getServer());
 
@@ -221,6 +318,9 @@ public class HuntCommands {
 
         // Reset stage
         manager.clearPlayerStage(player.getUUID());
+
+        // Clear dialogue progress so player can see dialogue again
+        manager.clearSeenDialogue(player.getUUID());
 
         source.sendSuccess(() -> Component.literal("Reset hunt progress for ")
             .append(player.getDisplayName())
@@ -243,6 +343,36 @@ public class HuntCommands {
                 stack.is(ModItems.MYSTERIOUS_PARCHMENT.get())) {
                 player.getInventory().setItem(i, ItemStack.EMPTY);
             }
+        }
+    }
+
+    /**
+     * Resets the mysterious orb permanent trade tracking via reflection.
+     * This calls DailyTradeResetManager.resetMysteriousOrbTrade() in cobblemon-custom-merchants
+     * if that mod is installed. Fails silently if the mod is not present.
+     */
+    private static void resetMysteriousOrbTradeViaReflection(net.minecraft.server.level.ServerLevel level, java.util.UUID playerUUID) {
+        try {
+            // Try to load the DailyTradeResetManager class from cobblemon-custom-merchants
+            Class<?> resetManagerClass = Class.forName("net.fit.cobblemonmerchants.merchant.rewards.DailyTradeResetManager");
+
+            // Get the static resetMysteriousOrbTrade method
+            java.lang.reflect.Method resetMethod = resetManagerClass.getMethod("resetMysteriousOrbTrade",
+                net.minecraft.server.level.ServerLevel.class, java.util.UUID.class);
+
+            // Call it
+            Boolean result = (Boolean) resetMethod.invoke(null, level, playerUUID);
+
+            if (result) {
+                SkysCobblemonCosmetics.LOGGER.info("Reset mysterious orb permanent trade for player {}", playerUUID);
+            } else {
+                SkysCobblemonCosmetics.LOGGER.debug("No mysterious orb trade record to reset for player {}", playerUUID);
+            }
+        } catch (ClassNotFoundException e) {
+            // cobblemon-custom-merchants is not installed, silently ignore
+            SkysCobblemonCosmetics.LOGGER.debug("cobblemon-custom-merchants not found, skipping orb trade reset");
+        } catch (Exception e) {
+            SkysCobblemonCosmetics.LOGGER.warn("Failed to reset mysterious orb trade via reflection: {}", e.getMessage());
         }
     }
 }

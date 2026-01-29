@@ -63,7 +63,7 @@ public class RunicAltarBlock extends Block {
             }
 
             player.sendSystemMessage(Component.literal("The altar bestows upon you an ancient tablet...")
-                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
             // Play mystical sound
             level.playSound(null, pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0f, 1.0f);

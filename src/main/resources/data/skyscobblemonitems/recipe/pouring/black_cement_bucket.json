@@ -1,0 +1,13 @@
+{
+  "type": "brewinandchewin:keg_pouring",
+  "fluid": {
+    "amount": 1000,
+    "id": "createdieselgenerators:black_cement"
+  },
+  "output": {
+    "count": 1,
+    "id": "createdieselgenerators:black_cement_bucket"
+  },
+  "unit": "millibuckets",
+  "can_fill": true
+}

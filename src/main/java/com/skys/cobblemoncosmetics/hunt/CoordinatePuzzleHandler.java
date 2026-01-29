@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Handles the coordinate puzzle mechanics for the Crystal Ascendancy hunt.
+ * Handles the coordinate puzzle mechanics for the Cobalt Ascendancy hunt.
  * - Star puzzle: Look at sky at night to find X coordinate digits (position feedback, not actual number)
  * - Origin puzzle: Travel to exactly (0,0,0) to reveal Z coordinate (with proximity feedback)
  */
@@ -148,8 +148,8 @@ public class CoordinatePuzzleHandler {
 
                 // Send success message
                 player.sendSystemMessage(Component.literal(
-                    "§a✦ The stars align! The inscription on the orb becomes a little more clear. ✦"
-                ));
+                    "The stars align! The inscription on the orb becomes a little more clear."
+                ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
                 // Play magical reveal sound
                 player.level().playSound(null, player.blockPosition(),
@@ -157,43 +157,44 @@ public class CoordinatePuzzleHandler {
 
                 lastStarBeepTime.put(playerId, currentTime);
             }
-        } else if (accuracy < HuntConfig.STAR_CLOSE_RANGE) {
-            // Player is close - yellow feedback with hovering message
-            Long lastBeep = lastStarBeepTime.get(playerId);
-            if (lastBeep == null || currentTime - lastBeep > 500) {
-                // Mark as "close" (yellow) if not already revealed
-                MysteriousOrbItem.revealXDigit(orbStack, digitPosition, false);
+        } else if (accuracy < HuntConfig.STAR_QUADRANT_RANGE) {
+            // Metal detector-style feedback: notes get faster and higher-pitched as accuracy improves
+            // accuracy ranges from ~STAR_EXACT_RANGE to STAR_QUADRANT_RANGE
+            // Progress: 0.0 = at edge of quadrant (slow, low), 1.0 = very close (fast, high)
+            float progress = 1.0f - (accuracy - HuntConfig.STAR_EXACT_RANGE) /
+                            (HuntConfig.STAR_QUADRANT_RANGE - HuntConfig.STAR_EXACT_RANGE);
+            progress = Math.max(0.0f, Math.min(1.0f, progress)); // Clamp to 0-1
 
-                // High-pitched chime for close
+            Long lastBeep = lastStarBeepTime.get(playerId);
+
+            // Interval: 1500ms at edge (slow) -> 100ms when very close (fast)
+            long beepInterval = (long) (1500 - progress * 1400);
+
+            // Pitch: 0.5 at edge (low) -> 2.0 when very close (high)
+            float soundPitch = 0.5f + progress * 1.5f;
+
+            // Volume: slightly louder when closer
+            float volume = 0.6f + progress * 0.4f;
+
+            if (lastBeep == null || currentTime - lastBeep > beepInterval) {
+                // Note block harp sound - pitch and speed increase as player gets closer
                 player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS, 0.8F, 1.5F);
+                    SoundEvents.NOTE_BLOCK_HARP.value(), SoundSource.PLAYERS, volume, soundPitch);
 
                 lastStarBeepTime.put(playerId, currentTime);
             }
 
-            // Show hovering action bar message (overrides origin hum)
-            player.connection.send(new ClientboundSetActionBarTextPacket(
-                Component.literal("§e§lThe orb shimmers happily. You must be close...")
-            ));
-            showingCloseMessage = true;
-            starCloseOverrideTime.put(playerId, currentTime);
+            // Show action bar message when close (within STAR_CLOSE_RANGE)
+            if (accuracy < HuntConfig.STAR_CLOSE_RANGE) {
+                // Mark as "close" (yellow) if not already revealed
+                MysteriousOrbItem.revealXDigit(orbStack, digitPosition, false);
 
-        } else if (accuracy < HuntConfig.STAR_BEEP_RANGE) {
-            // Player is getting closer - play beeping that speeds up
-            Long lastBeep = lastStarBeepTime.get(playerId);
-
-            // Beep interval based on accuracy (closer = faster beeping)
-            long beepInterval = (long) (150 + (accuracy / HuntConfig.STAR_BEEP_RANGE) * 600);
-
-            if (lastBeep == null || currentTime - lastBeep > beepInterval) {
-                // Calculate pitch based on accuracy (closer = higher pitch)
-                float soundPitch = 0.6f + (1.0f - accuracy / HuntConfig.STAR_BEEP_RANGE) * 1.2f;
-
-                // Louder and more prominent bell sound
-                player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.PLAYERS, 0.9F, soundPitch);
-
-                lastStarBeepTime.put(playerId, currentTime);
+                // Show hovering action bar message (overrides origin hum)
+                player.connection.send(new ClientboundSetActionBarTextPacket(
+                    Component.literal("§e§lThe orb shimmers happily. You must be close...")
+                ));
+                showingCloseMessage = true;
+                starCloseOverrideTime.put(playerId, currentTime);
             }
         }
 
@@ -317,8 +318,8 @@ public class CoordinatePuzzleHandler {
 
         // Send triumphant message
         player.sendSystemMessage(Component.literal(
-            "§a✦ The orb swirls with satisfaction. The inscription becomes ever clearer. ✦"
-        ));
+            "The orb swirls with satisfaction. The inscription becomes ever clearer."
+        ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
         // Play level up sound for achievement feel
         player.level().playSound(null, player.blockPosition(),

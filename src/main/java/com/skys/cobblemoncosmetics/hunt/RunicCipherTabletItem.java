@@ -46,7 +46,7 @@ public class RunicCipherTabletItem extends Item {
 
                 // Send message
                 player.sendSystemMessage(Component.literal("The runes begin to glow with ethereal light...")
-                    .withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC));
+                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
             }
 
             return InteractionResultHolder.sidedSuccess(tabletStack, level.isClientSide);

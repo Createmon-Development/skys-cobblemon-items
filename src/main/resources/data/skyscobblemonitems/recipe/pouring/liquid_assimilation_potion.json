@@ -1,0 +1,16 @@
+{
+  "type": "brewinandchewin:keg_pouring",
+  "container": {
+    "count": 1,
+    "id": "minecraft:glass_bottle"
+  },
+  "fluid": {
+    "amount": 250,
+    "id": "skyscobblemonitems:liquid_assimilation"
+  },
+  "output": {
+    "count": 1,
+    "id": "skyscobblemonitems:liquid_assimilation_potion"
+  },
+  "unit": "millibuckets"
+}

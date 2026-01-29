@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Data components for the Crystal Ascendancy hunt items
+ * Data components for the Cobalt Ascendancy hunt items
  */
 @SuppressWarnings("removal")
 public class HuntDataComponents {
@@ -60,6 +60,11 @@ public class HuntDataComponents {
     // Current proximity state for origin puzzle (0=none, 1=far, 2=medium, 3=close, 4=exact)
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ORB_PROXIMITY =
         DATA_COMPONENTS.registerComponentType("orb_proximity", builder ->
+            builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
+
+    // Edition number for completed orbs (tracks what place the player finished)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ORB_EDITION =
+        DATA_COMPONENTS.registerComponentType("orb_edition", builder ->
             builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
 
     // Orb states enum for clarity

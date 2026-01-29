@@ -1,0 +1,84 @@
+{
+  "marks": {
+    "cobalt_champion_1": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_1",
+      "title": "skyscobblemonitems.mark.cobalt_champion_1.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_1.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1001
+    },
+    "cobalt_champion_2": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_2",
+      "title": "skyscobblemonitems.mark.cobalt_champion_2.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_2.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1002
+    },
+    "cobalt_champion_3": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_3",
+      "title": "skyscobblemonitems.mark.cobalt_champion_3.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_3.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1003
+    },
+    "cobalt_champion_4": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_4",
+      "title": "skyscobblemonitems.mark.cobalt_champion_4.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_4.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1004
+    },
+    "cobalt_champion_5": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_5",
+      "title": "skyscobblemonitems.mark.cobalt_champion_5.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_5.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1005
+    },
+    "cobalt_champion_6": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_6",
+      "title": "skyscobblemonitems.mark.cobalt_champion_6.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_6.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1006
+    },
+    "cobalt_champion_7": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_7",
+      "title": "skyscobblemonitems.mark.cobalt_champion_7.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_7.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1007
+    },
+    "cobalt_champion_8": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_8",
+      "title": "skyscobblemonitems.mark.cobalt_champion_8.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_8.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1008
+    },
+    "cobalt_champion_9": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_9",
+      "title": "skyscobblemonitems.mark.cobalt_champion_9.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_9.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1009
+    },
+    "cobalt_champion_10": {
+      "name": "skyscobblemonitems.mark.cobalt_champion_10",
+      "title": "skyscobblemonitems.mark.cobalt_champion_10.title",
+      "titleColor": "4169E1",
+      "description": "skyscobblemonitems.mark.cobalt_champion_10.desc",
+      "texture": "skyscobblemonitems:textures/gui/mark/cobalt_champion.png",
+      "indexNumber": 1010
+    }
+  }
+}

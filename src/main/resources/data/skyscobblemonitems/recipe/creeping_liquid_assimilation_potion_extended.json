@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "skyscobblemonitems:creeping_liquid_assimilation_potion" },
+    { "item": "minecraft:redstone" }
+  ],
+  "result": {
+    "id": "skyscobblemonitems:creeping_liquid_assimilation_potion_extended",
+    "count": 1
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "skyscobblemonitems:item/misc/Liquid_Assimilation_Potion_Throwable"
+  }
+}
