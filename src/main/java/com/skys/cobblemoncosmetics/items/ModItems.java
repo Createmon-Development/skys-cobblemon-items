@@ -6,6 +6,7 @@ import com.skys.cobblemoncosmetics.hunt.MysteriousOrbItem;
 import com.skys.cobblemoncosmetics.hunt.MysteriousParchmentItem;
 import com.skys.cobblemoncosmetics.hunt.RunicCipherTabletItem;
 import com.skys.cobblemoncosmetics.hunt.TempleTreasureMapItem;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -83,7 +84,8 @@ public class ModItems {
         () -> new RunicCipherTabletItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<Item> MYSTERIOUS_PARCHMENT = ITEMS.register("mysterious_parchment",
-        () -> new MysteriousParchmentItem(new Item.Properties().stacksTo(1)));
+        () -> new MysteriousParchmentItem(new Item.Properties().stacksTo(1)
+            .component(DataComponents.WRITTEN_BOOK_CONTENT, MysteriousParchmentItem.createBookContent())));
 
     // Temple Treasure Map - Given by Treasure Hunter's Assistant during step 3
     // NOTE: This creates a vanilla filled_map with custom decorations when given to player

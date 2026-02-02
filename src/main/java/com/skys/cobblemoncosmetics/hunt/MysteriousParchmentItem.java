@@ -1,10 +1,8 @@
 package com.skys.cobblemoncosmetics.hunt;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundOpenBookPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -14,14 +12,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.WrittenBookContent;
-import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Mysterious Parchment - A cryptic poem item for the Cobalt Ascendancy hunt.
- * Right-clicking opens it as a book with the runic prophecy.
+ * Has WRITTEN_BOOK_CONTENT component set as default, and sends OpenBook packet when used.
  */
 public class MysteriousParchmentItem extends Item {
 
@@ -30,19 +27,14 @@ public class MysteriousParchmentItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        // Ensure the book content is set (do this on both sides for consistency)
-        if (!stack.has(DataComponents.WRITTEN_BOOK_CONTENT)) {
-            setBookContent(stack);
-        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            // Send the open book packet - client will read WRITTEN_BOOK_CONTENT from item in hand
+            serverPlayer.connection.send(new ClientboundOpenBookPacket(hand));
 
-        if (level.isClientSide()) {
-            // Client side: Open the book GUI
-            openBookScreen(stack);
-        } else if (player instanceof ServerPlayer) {
-            // Server side: Award stat
+            // Award stat
             player.awardStat(Stats.ITEM_USED.get(this));
         }
 
@@ -50,19 +42,10 @@ public class MysteriousParchmentItem extends Item {
     }
 
     /**
-     * Opens the book view screen on the client side.
-     * This must be called from client-side code only.
+     * Creates the written book content for this parchment.
+     * Called during item registration to set as default component.
      */
-    private void openBookScreen(ItemStack stack) {
-        // Use the static factory method to create the appropriate BookAccess
-        BookViewScreen.BookAccess bookAccess = BookViewScreen.BookAccess.fromItem(stack);
-        Minecraft.getInstance().setScreen(new BookViewScreen(bookAccess));
-    }
-
-    /**
-     * Sets up the written book content for this parchment
-     */
-    private void setBookContent(ItemStack stack) {
+    public static WrittenBookContent createBookContent() {
         List<Component> pages = new ArrayList<>();
 
         // Build pages with the runic poem
@@ -99,7 +82,7 @@ public class MysteriousParchmentItem extends Item {
         pages.add(Component.literal(page4.toString()).withStyle(ChatFormatting.DARK_PURPLE));
 
         // Create the written book content
-        WrittenBookContent bookContent = new WrittenBookContent(
+        return new WrittenBookContent(
             net.minecraft.server.network.Filterable.passThrough(encodeToRunes("Prophecy")), // title in runes
             "???", // author
             0, // generation
@@ -108,8 +91,6 @@ public class MysteriousParchmentItem extends Item {
                 .toList(),
             true // resolved
         );
-
-        stack.set(DataComponents.WRITTEN_BOOK_CONTENT, bookContent);
     }
 
     @Override
@@ -119,20 +100,12 @@ public class MysteriousParchmentItem extends Item {
         tooltipComponents.add(Component.empty());
         tooltipComponents.add(Component.literal("Right-click to read")
             .withStyle(ChatFormatting.GRAY));
-
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     @Override
     public boolean isFoil(ItemStack stack) {
         // Enchantment glint to make it look magical
         return true;
-    }
-
-    @Override
-    public Component getName(ItemStack stack) {
-        // Return the translated name, not the book title
-        return Component.translatable(this.getDescriptionId(stack));
     }
 
     /**
