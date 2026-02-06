@@ -601,7 +601,10 @@ public class KyogreBattleManager {
         }
 
         // Apply the Cobalt Champion mark to the captured Kyogre
-        applyChampionMark(player, placement);
+        // Delay to ensure the Pokemon is in the party after capture sync (longer on servers)
+        final int finalPlacement = placement;
+        final UUID playerUUID = player.getUUID();
+        scheduleMarkApplication(level.getServer(), playerUUID, finalPlacement, 0);
 
         // Send success message to player
         player.sendSystemMessage(Component.literal("")
@@ -631,44 +634,86 @@ public class KyogreBattleManager {
     }
 
     /**
+     * Schedules mark application with retry logic.
+     * On dedicated servers, the Pokemon may not be in the party immediately after capture.
+     */
+    private static void scheduleMarkApplication(net.minecraft.server.MinecraftServer server, UUID playerUUID, int placement, int attempt) {
+        // Delay: 20 ticks (1s) on first attempt, 40 ticks (2s) on retries
+        int delayTicks = attempt == 0 ? 20 : 40;
+        int maxAttempts = 5; // Try up to 5 times (total ~9 seconds)
+
+        server.tell(new net.minecraft.server.TickTask(
+            server.getTickCount() + delayTicks, () -> {
+                ServerPlayer player = server.getPlayerList().getPlayer(playerUUID);
+                if (player == null) {
+                    SkysCobblemonCosmetics.LOGGER.warn("Player disconnected before mark could be applied (attempt {})", attempt + 1);
+                    return;
+                }
+
+                boolean success = applyChampionMark(player, placement);
+
+                if (!success && attempt + 1 < maxAttempts) {
+                    SkysCobblemonCosmetics.LOGGER.info("Kyogre not found in party yet, retrying... (attempt {}/{})", attempt + 2, maxAttempts);
+                    scheduleMarkApplication(server, playerUUID, placement, attempt + 1);
+                } else if (!success) {
+                    SkysCobblemonCosmetics.LOGGER.error("Failed to apply mark after {} attempts! Player {} may need manual mark application: /givemark {} <slot> cobblemon:cobalt_champion_{}",
+                        maxAttempts, player.getName().getString(), player.getName().getString(), Math.min(placement, 10));
+                    player.sendSystemMessage(Component.literal("Mark could not be applied automatically. An admin can apply it with: /givemark "
+                        + player.getName().getString() + " <kyogre_slot> cobblemon:cobalt_champion_" + Math.min(placement, 10))
+                        .withStyle(ChatFormatting.YELLOW));
+                }
+            }
+        ));
+    }
+
+    /**
      * Applies the appropriate Cobalt Champion mark to the player's most recently caught Kyogre.
      * Uses the /givemark command to apply the mark.
+     * @return true if mark was applied successfully, false if Kyogre not found
      */
-    private static void applyChampionMark(ServerPlayer player, int placement) {
+    private static boolean applyChampionMark(ServerPlayer player, int placement) {
         // Find the Kyogre in the player's party
         var partyStore = com.cobblemon.mod.common.Cobblemon.INSTANCE.getStorage().getParty(player);
         int kyogreSlot = -1;
 
+        // Log all party slots for debugging
+        SkysCobblemonCosmetics.LOGGER.info("Searching for Kyogre in {}'s party (size: {}):", player.getName().getString(), partyStore.size());
         for (int i = 0; i < partyStore.size(); i++) {
             var pokemon = partyStore.get(i);
-            if (pokemon != null && pokemon.getSpecies().getName().equalsIgnoreCase("kyogre")) {
-                kyogreSlot = i + 1; // Command uses 1-indexed slots
-                SkysCobblemonCosmetics.LOGGER.info("Found Kyogre in slot {} for player {}", kyogreSlot, player.getName().getString());
-                break;
+            if (pokemon != null) {
+                SkysCobblemonCosmetics.LOGGER.info("  Slot {}: species={}", i + 1, pokemon.getSpecies().getName());
+                if (pokemon.getSpecies().getName().equalsIgnoreCase("kyogre")) {
+                    kyogreSlot = i + 1; // Command uses 1-indexed slots
+                    SkysCobblemonCosmetics.LOGGER.info("  -> Found Kyogre in slot {}", kyogreSlot);
+                    break;
+                }
+            } else {
+                SkysCobblemonCosmetics.LOGGER.info("  Slot {}: empty", i + 1);
             }
         }
 
         if (kyogreSlot == -1) {
-            SkysCobblemonCosmetics.LOGGER.warn("Could not find Kyogre in player's party to apply mark. Party size: {}", partyStore.size());
-            return;
+            SkysCobblemonCosmetics.LOGGER.warn("Could not find Kyogre in player's party to apply mark!");
+            return false;
         }
 
         // Determine mark name based on placement (max 10 pre-created marks)
         // Must use cobblemon namespace as marks are loaded from data/cobblemon/marks/
         String markName = "cobblemon:cobalt_champion_" + Math.min(placement, 10);
 
-        // Execute the givemark command
+        // Execute the givemark command - do NOT suppress output so errors are visible in server logs
         String command = String.format("givemark %s %d %s", player.getName().getString(), kyogreSlot, markName);
-        SkysCobblemonCosmetics.LOGGER.info("Executing mark command: {}", command);
+        SkysCobblemonCosmetics.LOGGER.info("Executing mark command: /{}", command);
 
         try {
             var commandSource = player.server.createCommandSourceStack()
-                .withPermission(4) // OP level to bypass permission checks
-                .withSuppressedOutput();
+                .withPermission(4); // OP level to bypass permission checks
             player.server.getCommands().performPrefixedCommand(commandSource, command);
             SkysCobblemonCosmetics.LOGGER.info("Mark command executed successfully");
+            return true;
         } catch (Exception e) {
             SkysCobblemonCosmetics.LOGGER.error("Failed to apply champion mark via command: {}", e.getMessage(), e);
+            return false;
         }
     }
 
@@ -676,18 +721,12 @@ public class KyogreBattleManager {
      * Handles Kyogre defeat or player flee - reset the orb
      */
     private static void handleKyogreDefeated(ServerPlayer player, BattleContext context) {
-        // Reset orb to base form (empty, no progress)
-        ItemStack resetOrb = new ItemStack(ModItems.MYSTERIOUS_ORB.get());
-        MysteriousOrbItem.setOrbState(resetOrb, HuntDataComponents.OrbState.EMPTY);
-        MysteriousOrbItem.setKillCount(resetOrb, 0);
-        MysteriousOrbItem.setRevealedRunes(resetOrb, 0);
-        MysteriousOrbItem.setXDigits(resetOrb, 0);
-        MysteriousOrbItem.setYDigits(resetOrb, 0);
-        MysteriousOrbItem.setZDigits(resetOrb, 0);
+        // Return the full powered orb (same state as when thrown into the pool)
+        ItemStack returnedOrb = context.orbStack.copy();
 
-        // Give the reset orb back
-        if (!player.getInventory().add(resetOrb)) {
-            player.drop(resetOrb, false);
+        // Give the orb back
+        if (!player.getInventory().add(returnedOrb)) {
+            player.drop(returnedOrb, false);
         }
 
         // Send failure message
@@ -695,13 +734,13 @@ public class KyogreBattleManager {
             Component.literal("Kyogre has returned to the depths...")
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
         player.sendSystemMessage(Component.literal("").append(
-            Component.literal("Your orb has lost its power. You must begin again.")
-                .withStyle(ChatFormatting.RED)));
+            Component.literal("The orb still hums with power. Perhaps you can try again...")
+                .withStyle(ChatFormatting.GOLD)));
 
         // Play sad sound
-        player.level().playSound(null, player.blockPosition(), SoundEvents.WARDEN_DEATH, SoundSource.HOSTILE, 0.8f, 0.5f);
+        player.playNotifySound(SoundEvents.WARDEN_DEATH, SoundSource.HOSTILE, 0.8f, 0.5f);
 
-        SkysCobblemonCosmetics.LOGGER.info("Player {} failed Kyogre battle - orb reset",
+        SkysCobblemonCosmetics.LOGGER.info("Player {} failed Kyogre battle - returning full powered orb",
             player.getName().getString());
     }
 

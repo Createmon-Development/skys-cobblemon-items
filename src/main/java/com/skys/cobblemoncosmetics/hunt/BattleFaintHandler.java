@@ -78,9 +78,8 @@ public class BattleFaintHandler {
             killCount = 0; // Reset kill counter
             revealedRunes++;
 
-            // Play mystical sound
-            player.level().playSound(null, player.blockPosition(),
-                SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 1.2F);
+            // Play mystical sound (only audible to this player)
+            player.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 1.2F);
 
             // Update orb state based on runes revealed
             HuntDataComponents.OrbState newState = calculateOrbState(revealedRunes);
@@ -121,8 +120,7 @@ public class BattleFaintHandler {
 
             // Extra fanfare for completion - level up sound
             if (newState == HuntDataComponents.OrbState.FINAL) {
-                player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
+                player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
         }
     }

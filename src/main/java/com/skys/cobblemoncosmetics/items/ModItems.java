@@ -56,6 +56,12 @@ public class ModItems {
     public static final DeferredItem<Item> GOOMY_BADGE = ITEMS.register("goomy_badge",
         () -> new GymBadgeItem(new Item.Properties()));
 
+    public static final DeferredItem<Item> AURORA_BADGE = ITEMS.register("aurora_badge",
+        () -> new GymBadgeItem(new Item.Properties()));
+
+    public static final DeferredItem<Item> STICKY_BADGE = ITEMS.register("sticky_badge",
+        () -> new GymBadgeItem(new Item.Properties()));
+
     // Fishing items
     public static final DeferredItem<Item> MISSING_CLOVER = ITEMS.register("missing_clover",
         () -> new MissingCloverItem(new Item.Properties().stacksTo(1)));
@@ -133,6 +139,8 @@ public class ModItems {
             output.accept(BEAT_BADGE.get());
             output.accept(IRON_MAIDEN_MEGA_BRACELET.get());
             output.accept(GOOMY_BADGE.get());
+            output.accept(AURORA_BADGE.get());
+            output.accept(STICKY_BADGE.get());
             output.accept(MISSING_CLOVER.get());
             output.accept(RUSTED_GOLD_POKEBALL.get());
             output.accept(POLISHED_GOLD_POKEBALL.get());

@@ -138,10 +138,8 @@ public class CoordinatePuzzleHandler {
             Long lastBeep = lastStarBeepTime.get(playerId);
             if (lastBeep == null || currentTime - lastBeep > 2000) {
                 // Play loud success ding
-                player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.5F, 1.8F);
-                player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.5F);
+                player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.5F, 1.8F);
+                player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.5F);
 
                 // Reveal the X digit (exact)
                 MysteriousOrbItem.revealXDigit(orbStack, digitPosition, true);
@@ -152,8 +150,7 @@ public class CoordinatePuzzleHandler {
                 ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
                 // Play magical reveal sound
-                player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 1.5F);
+                player.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 1.5F);
 
                 lastStarBeepTime.put(playerId, currentTime);
             }
@@ -178,8 +175,7 @@ public class CoordinatePuzzleHandler {
 
             if (lastBeep == null || currentTime - lastBeep > beepInterval) {
                 // Note block harp sound - pitch and speed increase as player gets closer
-                player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.NOTE_BLOCK_HARP.value(), SoundSource.PLAYERS, volume, soundPitch);
+                player.playNotifySound(SoundEvents.NOTE_BLOCK_HARP.value(), SoundSource.PLAYERS, volume, soundPitch);
 
                 lastStarBeepTime.put(playerId, currentTime);
             }
@@ -202,6 +198,11 @@ public class CoordinatePuzzleHandler {
     }
 
     private static void checkOriginPuzzle(ServerPlayer player, ItemStack orbStack, boolean starCloseActive) {
+        // Skip all origin feedback if Z coordinates are already fully discovered
+        if (MysteriousOrbItem.getZDigits(orbStack) == 0b1111) {
+            return;
+        }
+
         BlockPos playerPos = player.blockPosition();
 
         // Calculate distance to world origin (0, any Y, 0) for proximity feedback
@@ -277,8 +278,7 @@ public class CoordinatePuzzleHandler {
 
             if (lastHum == null || currentTime - lastHum > humInterval) {
                 // Use a shorter, more responsive sound
-                player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.BEACON_AMBIENT, SoundSource.PLAYERS, volume, pitch);
+                player.playNotifySound(SoundEvents.BEACON_AMBIENT, SoundSource.PLAYERS, volume, pitch);
 
                 lastOriginHumTime.put(playerId, currentTime);
             }
@@ -304,14 +304,12 @@ public class CoordinatePuzzleHandler {
         // Check if Z digits already revealed
         if (MysteriousOrbItem.getZDigits(orbStack) == 0b1111) {
             // Already revealed, just play a gentle confirmation
-            player.level().playSound(null, player.blockPosition(),
-                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.5F, 1.0F);
+            player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.5F, 1.0F);
             return;
         }
 
         // Play epic discovery sequence
-        player.level().playSound(null, player.blockPosition(),
-            SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.5F, 1.2F);
+        player.playNotifySound(SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.5F, 1.2F);
 
         // Reveal all Z digits
         MysteriousOrbItem.revealAllZDigits(orbStack);
@@ -322,12 +320,10 @@ public class CoordinatePuzzleHandler {
         ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 
         // Play level up sound for achievement feel
-        player.level().playSound(null, player.blockPosition(),
-            SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
+        player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
 
         // Delayed chime for extra impact
-        player.level().playSound(null, player.blockPosition(),
-            SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0F, 1.5F);
+        player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0F, 1.5F);
     }
 
     // Utility: Normalize angle to 0-360 range
